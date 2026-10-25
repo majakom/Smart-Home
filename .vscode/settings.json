@@ -1,3 +1,3 @@
 {
-    "dotnet.defaultSolution": "SmartHome.slnx"
+    "dotnet.defaultSolution": "dotnet/SmartHome.slnx"
 }
