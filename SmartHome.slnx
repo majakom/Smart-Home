@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SmartHome.Api/SmartHome.Api.csproj" />
+    <Project Path="src/SmartHome.Application/SmartHome.Application.csproj" />
+    <Project Path="src/SmartHome.DbMigrator/SmartHome.DbMigrator.csproj" />
+    <Project Path="src/SmartHome.Domain/SmartHome.Domain.csproj" />
+    <Project Path="src/SmartHome.Infrastructure/SmartHome.Infrastructure.csproj" />
+    <Project Path="src/SmartHome.TelemetryWorker/SmartHome.TelemetryWorker.csproj" />
+    <Project Path="src/SmartHome.Web/SmartHome.Web.csproj" />
+  </Folder>
+</Solution>
