@@ -3,9 +3,37 @@ __pycache__/
 .venv/
 venv/
 
+# .NET build output
+[Bb]in/
+[Oo]bj/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.binlog
+
+# .NET Core
+artifacts/
+
+# NuGet Packages
+*.nupkg
+
+# NuGet Symbol Packages
+*.snupkg
+
 # IDE and OS files
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 .idea/
+.vs/
+*.rsuser
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
 
 # Environment variables and secrets
 .env
