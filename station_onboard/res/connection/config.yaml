@@ -1,3 +1,0 @@
-mqtt_data:
-  host: localhost     #Host to send data to
-  port: 1883          #Port to send data to
