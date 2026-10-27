@@ -1,0 +1,3 @@
+[submodule "devices/Air-Station"]
+	path = devices/Air-Station
+	url = https://github.com/majakom/Air-Station.git
