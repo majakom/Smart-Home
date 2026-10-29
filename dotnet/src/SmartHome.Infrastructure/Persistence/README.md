@@ -1,6 +1,6 @@
 # Manual Database Migrations
 
-> **This is a manual CLI workflow, not the intended way to apply migrations in this project.** It is useful for local development. The intended application/deployment path is the one-shot `SmartHome.DbMigrator`; that project is planned for this role but is not implemented yet.
+> **This is a manual CLI workflow for local development.** The intended application/deployment path is the one-shot [SmartHome.DbMigrator](../../SmartHome.DbMigrator/README.md).
 
 This project uses Entity Framework Core (EF Core) migrations to manage PostgreSQL schema changes. The `SmartHome.Infrastructure` project owns `SmartHomeDbContext`, its configurations, the design-time factory, and generated migrations.
 
@@ -20,6 +20,8 @@ dotnet tool install --global dotnet-ef --version <EF_CORE_VERSION>
 Replace `<EF_CORE_VERSION>` with the version specified in `SmartHome.Infrastructure.csproj`.
 
 ## Create a migration
+
+> **Create a migration whenever a model change needs a database schema change.** `database update` and DbMigrator can only apply migrations that have already been created.
 
 Run from the repository root:
 

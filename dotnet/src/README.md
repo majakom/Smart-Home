@@ -84,7 +84,7 @@ Keep PostgreSQL as the source of truth for operational data such as devices and 
 
 ### Database schema changes
 
-The EF Core model and its configuration in `SmartHome.Infrastructure` define the persistence mapping. Generated, committed migrations and the model snapshot belong in that project, for example under `Persistence/Migrations/`. `SmartHome.DbMigrator` runs those migrations against the configured PostgreSQL database and then shuts down. `infrastructure/postgres/` remains for the PostgreSQL runtime configuration and operational documentation; it is not a second copy of the application schema.
+The EF Core model and its configuration in `SmartHome.Infrastructure` define the persistence mapping. Generated, committed migrations and the model snapshot belong in that project, for example under `Persistence/Migrations/`. The [DbMigrator README](SmartHome.DbMigrator/README.md) explains how to apply them with the one-shot migrator. `infrastructure/postgres/` remains for PostgreSQL runtime configuration and operational documentation; it is not a second copy of the application schema.
 
 For CLI migration commands and local setup, see [Persistence README](SmartHome.Infrastructure/Persistence/README.md). That workflow uses `dotnet ef` directly and does not use `SmartHome.DbMigrator`.
 
