@@ -21,7 +21,7 @@ services:
       start_period: 10s
 
   db-migrator:
-    container_name: smarhome-db-migrator
+    container_name: smarthome-db-migrator
     build:
       context: ./dotnet
       dockerfile: src/SmartHome.DbMigrator/Dockerfile

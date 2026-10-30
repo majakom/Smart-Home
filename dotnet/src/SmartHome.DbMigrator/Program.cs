@@ -15,7 +15,6 @@ internal class Program
 
         var builder = Host.CreateApplicationBuilder(args);
 
-        // Read the database connection string.
         var connectionString =
             builder.Configuration.GetConnectionString("SmartHome");
 

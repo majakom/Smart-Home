@@ -48,6 +48,7 @@ public sealed class ClimateMeasurementConfiguration : IEntityTypeConfiguration<C
             measurement.MeasuredAtUtc
         });
 
+        // Prevent replays of the same sensor message from creating duplicate measurements.
         builder.HasIndex(measurement => new
         {
             measurement.SensorId,

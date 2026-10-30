@@ -21,6 +21,7 @@ public sealed class SmartHomeDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        // Discover IEntityTypeConfiguration mappings from this Infrastructure assembly.
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(SmartHomeDbContext).Assembly);
     }
