@@ -88,6 +88,10 @@ The EF Core model and its configuration in `SmartHome.Infrastructure` define the
 
 For CLI migration commands and local setup, see [Persistence README](SmartHome.Infrastructure/Persistence/README.md). That workflow uses `dotnet ef` directly and does not use `SmartHome.DbMigrator`.
 
+## Development workflows
+
+For step-by-step instructions such as adding or changing a database table, see the [development guide](DEVELOPMENT.md). It distinguishes implemented parts from workflows that are still planned.
+
 ## Planned container setup
 
 The root `docker-compose.yml` defines PostgreSQL, Mosquitto, and the one-shot DbMigrator. InfluxDB is planned as InfluxDB Cloud, so it is an external managed service rather than a local Compose container. The remaining application containers are planned as the .NET implementation grows:

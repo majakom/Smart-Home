@@ -34,6 +34,8 @@ dotnet ef migrations add MigrationName `
 
 Replace `MigrationName` with a descriptive name, such as `AddSensorStatus`. Review and commit the generated migration and model snapshot.
 
+After creating the migration, you can apply it with [SmartHome.DbMigrator](../../SmartHome.DbMigrator/README.md) instead of running `dotnet ef database update` below. The migrator applies pending migrations and exits.
+
 ## Apply migrations
 
 Start the local PostgreSQL service if needed (`docker compose up -d postgres`), then apply pending migrations:
