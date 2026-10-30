@@ -1,10 +1,10 @@
+name: smarthome
+
 services:
   postgres:
     image: postgres:18
     container_name: smarthome-postgres
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-smarthome_postgres}
       POSTGRES_USER: ${POSTGRES_USER:-smarthome}
@@ -19,6 +19,18 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  db-migrator:
+    container_name: smarhome-db-migrator
+    build:
+      context: ./dotnet
+      dockerfile: src/SmartHome.DbMigrator/Dockerfile
+    environment:
+      ConnectionStrings__SmartHome: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-smarthome_postgres};Username=${POSTGRES_USER:-smarthome};Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set in .env}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
 
   mosquitto:
     image: eclipse-mosquitto:latest

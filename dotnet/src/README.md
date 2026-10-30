@@ -90,7 +90,7 @@ For CLI migration commands and local setup, see [Persistence README](SmartHome.I
 
 ## Planned container setup
 
-The root `docker-compose.yml` currently defines the PostgreSQL and Mosquitto infrastructure services. InfluxDB is planned as InfluxDB Cloud, so it is an external managed service rather than a local Compose container. The following application containers are planned as the .NET implementation grows:
+The root `docker-compose.yml` defines PostgreSQL, Mosquitto, and the one-shot DbMigrator. InfluxDB is planned as InfluxDB Cloud, so it is an external managed service rather than a local Compose container. The remaining application containers are planned as the .NET implementation grows:
 
 | Container | Runs | Connects to |
 | --- | --- | --- |
