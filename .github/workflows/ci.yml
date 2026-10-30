@@ -81,8 +81,6 @@ jobs:
   mosquitto:
     name: Mosquitto TLS
     runs-on: ubuntu-latest
-    env:
-      POSTGRES_PASSWORD: ci-only-placeholder
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
