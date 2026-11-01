@@ -54,6 +54,7 @@ public sealed class ClimateMeasurementConfiguration : IEntityTypeConfiguration<C
             measurement.SensorId,
             measurement.SourceMessageId
         })
-        .IsUnique();
+        .IsUnique()
+        .HasDatabaseName(IndexNames.ClimateMeasurementSensorSourceMessage);
     }
 }
