@@ -9,7 +9,13 @@ internal class Program
     {
         Env.NoClobber().TraversePath().Load();
 
-        var builder = Host.CreateApplicationBuilder(args);
+        HostApplicationBuilder builder = Host.CreateApplicationBuilder(
+            new HostApplicationBuilderSettings
+            {
+                Args = args,
+                ContentRootPath = AppContext.BaseDirectory
+            }
+        );
         
         string connectionString =
             builder.Configuration.GetConnectionString("SmartHome")
