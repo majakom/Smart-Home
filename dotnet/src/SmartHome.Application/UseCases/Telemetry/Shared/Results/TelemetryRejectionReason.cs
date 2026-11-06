@@ -7,5 +7,10 @@ public enum TelemetryRejectionReason
     DeviceNotFound,
     DeviceDisabled,
     SensorDisabled,
-    SensorCategoryMismatch
+    SensorCategoryMismatch,
+    InvalidSourceMessageId,
+    InvalidDeviceId,
+    InvalidSensorId,
+    InvalidMeasuredAtUtc,
+    InvalidMeasurementData
 }

@@ -12,6 +12,9 @@ public static class DependencyInjection
     {
         services.AddSingleton<TimeProvider>(TimeProvider.System);
 
+        services.AddSingleton<TelemetryRequestValidator>();
+        services.AddSingleton<RecordClimateMeasurementRequestValidator>();
+
         services.AddScoped<TelemetrySourceValidator>();
         services.AddScoped<RecordClimateMeasurementUseCase>();
 

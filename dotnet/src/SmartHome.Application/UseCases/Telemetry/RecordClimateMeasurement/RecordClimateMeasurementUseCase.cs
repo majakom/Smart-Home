@@ -9,16 +9,19 @@ namespace SmartHome.Application.UseCases.Telemetry.RecordClimateMeasurement;
 public sealed class RecordClimateMeasurementUseCase
 {
     private readonly TelemetrySourceValidator _telemetrySourceValidator;
+    private readonly RecordClimateMeasurementRequestValidator _requestValidator;
     private readonly IClimateMeasurementWriter _measurementWriter;
     private readonly TimeProvider _timeProvider;
 
     public RecordClimateMeasurementUseCase(
         TelemetrySourceValidator telemetrySourceValidator,
+        RecordClimateMeasurementRequestValidator requestValidator,
         IClimateMeasurementWriter measurementWriter,
         TimeProvider timeProvider
     )
     {
         _telemetrySourceValidator = telemetrySourceValidator;
+        _requestValidator = requestValidator;
         _measurementWriter = measurementWriter;
         _timeProvider = timeProvider;
     }
@@ -28,7 +31,13 @@ public sealed class RecordClimateMeasurementUseCase
         CancellationToken cancellationToken = default
     )
     {
-        // 1. Validate Telemetry Source (Device + Sensor)
+        // 1. Validate Request
+        TelemetryRejectionReason? requestRejection = _requestValidator.Validate(request);
+
+        if (requestRejection is TelemetryRejectionReason reason)
+            return RecordClimateMeasurementResult.Rejected(reason);
+
+        // 2. Validate Telemetry Source (Device + Sensor)
         TelemetrySourceValidationResult validation = await _telemetrySourceValidator.ValidateAsync(
             request.SensorId,
             request.DeviceId,
@@ -39,7 +48,7 @@ public sealed class RecordClimateMeasurementUseCase
         if (validation.RejectionReason is TelemetryRejectionReason rejectionReason)
             return RecordClimateMeasurementResult.Rejected(rejectionReason);
 
-        // 2. Create domain entity
+        // 3. Create domain entity
         ClimateMeasurement measurement = new ClimateMeasurement(
             request.SourceMessageId,
             request.SensorId,
@@ -49,13 +58,13 @@ public sealed class RecordClimateMeasurementUseCase
             request.RelativeHumidityPercent
         );
 
-        // 3. Add measurement to db
+        // 4. Add measurement to db
         bool added = await _measurementWriter.TryAddAsync(
             measurement,
             cancellationToken
         );
 
-        // 4. Return result
+        // 5. Return result
         if (!added)
             return RecordClimateMeasurementResult.Duplicate();
 
