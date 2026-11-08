@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Options;
 using SmartHome.TelemetryWorker.Configuration;
+using SmartHome.TelemetryWorker.HostedServices;
 using SmartHome.TelemetryWorker.Mqtt.Connection;
+using SmartHome.TelemetryWorker.Mqtt.Receiving;
 using SmartHome.TelemetryWorker.Mqtt.Receiving.Telemetry;
 using SmartHome.TelemetryWorker.Mqtt.Receiving.Telemetry.Handlers;
 
@@ -24,10 +26,17 @@ public static class DependencyInjection
             .ValidateOnStart();
 
         services.AddSingleton<MqttCertificateLoader>();
+        services.AddSingleton<MqttClientFactory>();
+
+        services.AddSingleton<IMqttMessageSubscriber, TelemetrySubscriber>();
         services.AddSingleton<TelemetryMessageDispatcher>();
+        services.AddSingleton<MqttMessageProcessor>();
+
         services.AddSingleton<TelemetryOutcomeLogger>();
 
         services.AddScoped<ITelemetryMessageHandler, ClimateMeasurementMessageHandler>();
+
+        services.AddHostedService<MqttHostedService>();
 
         return services;
     }

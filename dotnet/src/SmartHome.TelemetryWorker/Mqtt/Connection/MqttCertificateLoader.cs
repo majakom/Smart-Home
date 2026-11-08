@@ -40,9 +40,26 @@ public sealed class MqttCertificateLoader(IHostEnvironment environment)
 
     private X509Certificate2 LoadClientCertificate(string certificatePath, string privateKeyPath)
     {
-        string resolvedCertificatePath = ResolvePath(certificatePath);
-        string resolvedPrivateKeyPath = ResolvePath(privateKeyPath);
-        return X509Certificate2.CreateFromPemFile(resolvedCertificatePath, resolvedPrivateKeyPath);
+        string certPath = ResolvePath(certificatePath);
+        string keyPath = ResolvePath(privateKeyPath);
+
+        using X509Certificate2 pemCertificate =
+            X509Certificate2.CreateFromPemFile(certPath, keyPath);
+
+        byte[] pfx = pemCertificate.Export(X509ContentType.Pkcs12);
+
+        try
+        {
+            return X509CertificateLoader.LoadPkcs12(
+                pfx,
+                password: null,
+                X509KeyStorageFlags.UserKeySet |
+                X509KeyStorageFlags.PersistKeySet);
+        }
+        finally
+        {
+            System.Security.Cryptography.CryptographicOperations.ZeroMemory(pfx);
+        }
     }
 
     private string ResolvePath(string configuredPath)

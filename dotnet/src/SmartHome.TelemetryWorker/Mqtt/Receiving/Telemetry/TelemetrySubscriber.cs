@@ -1,3 +1,4 @@
+using System.Buffers;
 using MQTTnet;
 using MQTTnet.Packets;
 using MQTTnet.Protocol;
@@ -6,17 +7,23 @@ using SmartHome.TelemetryWorker.Mqtt.Topics.Telemetry;
 
 namespace SmartHome.TelemetryWorker.Mqtt.Receiving.Telemetry;
 
-public sealed class TelemetrySubscriber
+public sealed class TelemetrySubscriber(
+    TelemetryMessageDispatcher dispatcher
+) : IMqttMessageSubscriber
 {
     public void RegisterMessageHandler(
         IMqttClient mqttClient,
-        Func<MqttApplicationMessageReceivedEventArgs, Task> handler
+        CancellationToken cancellationToken
     )
     {
         ArgumentNullException.ThrowIfNull(mqttClient);
-        ArgumentNullException.ThrowIfNull(handler);
 
-        mqttClient.ApplicationMessageReceivedAsync += handler;
+        mqttClient.ApplicationMessageReceivedAsync += args =>
+            dispatcher.DispatchAsync(
+                args.ApplicationMessage.Topic,
+                args.ApplicationMessage.Payload.ToArray(),
+                cancellationToken
+            );
     }
 
     public async Task SubscribeAsync(
