@@ -20,7 +20,13 @@ public class DependencyInjectionTests
         services.AddSingleton(Substitute.For<IDeviceReader>());
         services.AddSingleton(Substitute.For<IClimateMeasurementWriter>());
 
-        using ServiceProvider serviceProvider = services.BuildServiceProvider();
+        using ServiceProvider serviceProvider = services.BuildServiceProvider(
+            new ServiceProviderOptions
+            {
+                ValidateScopes = true,
+                ValidateOnBuild = true
+            }
+        );
 
         // Act
         using IServiceScope scope1 = serviceProvider.CreateScope();
