@@ -6,7 +6,7 @@ using SmartHome.Domain.Sensors;
 
 namespace SmartHome.Infrastructure.Tests.Persistence.Mappings;
 
-public sealed class SensorMappingTests : PersistenceMappingTestBase
+public class SensorMappingTests : PersistenceMappingTestBase
 {
     [Fact]
     public void Model_MapsSensorToExpectedTable()

@@ -3,11 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using SmartHome.Domain.Measurements;
 using SmartHome.Domain.Sensors;
-using SmartHome.Infrastructure.Persistence;
 
 namespace SmartHome.Infrastructure.Tests.Persistence.Mappings;
 
-public sealed class ClimateMeasurementMappingTests
+public class ClimateMeasurementMappingTests
     : PersistenceMappingTestBase
 {
     [Fact]

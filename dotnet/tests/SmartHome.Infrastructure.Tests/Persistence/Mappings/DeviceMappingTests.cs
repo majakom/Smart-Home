@@ -5,7 +5,7 @@ using SmartHome.Domain.Devices;
 
 namespace SmartHome.Infrastructure.Tests.Persistence.Mappings;
 
-public sealed class DeviceMappingTests : PersistenceMappingTestBase
+public class DeviceMappingTests : PersistenceMappingTestBase
 {
     [Fact]
     public void Model_MapsDeviceToExpectedTable()
