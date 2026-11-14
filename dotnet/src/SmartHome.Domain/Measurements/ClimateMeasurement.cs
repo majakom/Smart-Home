@@ -19,8 +19,8 @@ public sealed class ClimateMeasurement
         SensorId sensorId,
         DateTime measuredAtUtc,
         DateTime receivedAtUtc,
-        decimal? temperatureCelsius,
-        decimal? relativeHumidityPercent)
+        decimal? temperatureCelsius = null,
+        decimal? relativeHumidityPercent = null)
     {
         if (sourceMessageId.Value <= 0)
             throw new ArgumentOutOfRangeException(nameof(sourceMessageId), "Source message ID must be a positive sensor sequence number.");

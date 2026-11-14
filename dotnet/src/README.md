@@ -2,19 +2,19 @@
 
 This directory contains the .NET part of SmartHome. The solution is organized by architectural layer and executable host: core business code is kept separate from database and network adapters, while each runnable process has its own project.
 
-The projects are being scaffolded, so this document describes their intended responsibilities and runtime flow. It is an architecture plan, not a claim that all features or containers are implemented yet.
+The Domain, Application, PostgreSQL Infrastructure, DbMigrator, and climate telemetry worker have initial implementations. The API and Web projects are still template scaffolds, and InfluxDB synchronization remains planned. Project-specific configuration, usage, and structure are documented in the linked READMEs.
 
 ## Projects and responsibilities
 
-| Project | Responsibility | References |
-| --- | --- | --- |
-| `SmartHome.Domain` | Business entities, value objects, domain rules, and domain events. It should not depend on other SmartHome projects or infrastructure frameworks. | None |
-| `SmartHome.Application` | Use cases, input/output models, application-level validation, and interfaces needed by use cases. Coordinates domain behavior without knowing how persistence or external services work. | `Domain` |
-| `SmartHome.Infrastructure` | Adapters for PostgreSQL, InfluxDB, and other external services. Holds EF Core persistence configuration and migrations. Implements interfaces defined by the inner layers. | `Application`, `Domain` |
-| `SmartHome.Api` | ASP.NET Core HTTP host. Defines HTTP endpoints, translates requests to application use cases, and configures dependency injection. It is the API consumed by the web and future mobile clients. | `Application`, `Infrastructure` |
-| `SmartHome.TelemetryWorker` | Long-running host that receives telemetry from MQTT and sends it through application use cases for validation and storage. | `Application`, `Infrastructure` |
-| `SmartHome.DbMigrator` | One-shot executable that connects to PostgreSQL, applies pending EF Core migrations, then exits. | `Infrastructure` |
-| `SmartHome.Web` | Blazor WebAssembly user interface. Runs in the browser and calls `SmartHome.Api` over HTTP; it must not connect directly to PostgreSQL or the broker. | No server-side project reference; communicates over HTTP |
+| Project | Current responsibility | References | Guide |
+| --- | --- | --- | --- |
+| `SmartHome.Domain` | Business entities, value objects, and rules; no infrastructure dependencies. | None | [README](SmartHome.Domain/README.md) |
+| `SmartHome.Application` | Climate measurement use case, validation, and ports for persistence. | `Domain` | [README](SmartHome.Application/README.md), [Use cases](SmartHome.Application/UseCases/README.md) |
+| `SmartHome.Infrastructure` | PostgreSQL persistence adapters, EF Core mappings, and migrations. | `Application`, `Domain` | [README](SmartHome.Infrastructure/README.md) |
+| `SmartHome.Api` | ASP.NET Core template scaffold; SmartHome endpoints and service wiring are not implemented yet. | `Application`, `Infrastructure` | — |
+| `SmartHome.TelemetryWorker` | Receives climate telemetry over MQTT and records measurements through Application. | `Application`, `Infrastructure` | [README](SmartHome.TelemetryWorker/README.md), [MQTT topics](SmartHome.TelemetryWorker/Mqtt/Topics/README.md) |
+| `SmartHome.DbMigrator` | One-shot executable that applies pending EF Core migrations to PostgreSQL. | `Infrastructure` | [README](SmartHome.DbMigrator/README.md) |
+| `SmartHome.Web` | Blazor WebAssembly template scaffold; not yet connected to the API. | No server-side project reference | — |
 
 The planned MAUI client is deliberately not included yet. When it is added at the end of the project, it will use MVVM on the client and call the same HTTP API as `SmartHome.Web`.
 
