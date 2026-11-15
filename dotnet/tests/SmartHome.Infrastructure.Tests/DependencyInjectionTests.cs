@@ -127,8 +127,7 @@ public class DependencyInjectionTests
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    public void AddInfrastructure_ThrowsWhenConnectionStringIsInvalid(
-        string? connectionString)
+    public void AddInfrastructure_ThrowsWhenConnectionStringIsInvalid(string connectionString)
     {
         // Arrange
         ServiceCollection services = new();

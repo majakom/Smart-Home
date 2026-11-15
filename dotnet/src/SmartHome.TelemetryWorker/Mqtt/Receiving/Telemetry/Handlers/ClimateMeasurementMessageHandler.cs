@@ -11,7 +11,7 @@ public sealed class ClimateMeasurementMessageHandler : ITelemetryMessageHandler
 {
     private readonly RecordClimateMeasurementUseCase _useCase;
     private readonly TelemetryOutcomeLogger _outcomeLogger;
-    ILogger<ClimateMeasurementMessageHandler> _logger;
+    private readonly ILogger<ClimateMeasurementMessageHandler> _logger;
 
     public ClimateMeasurementMessageHandler(
         RecordClimateMeasurementUseCase useCase,
