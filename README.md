@@ -30,3 +30,19 @@ Stop the services while preserving named-volume data:
 ```powershell
 docker compose down
 ```
+
+## Run .NET tests
+
+Prerequisites: .NET 10 SDK and Docker running. Infrastructure tests use Testcontainers to start PostgreSQL and Mosquitto containers, so Docker must be available even when you are not running the full Compose stack.
+
+From the repository root, run all tests in the solution:
+
+```powershell
+dotnet test .\dotnet\SmartHome.slnx
+```
+
+To run a single test project, for example:
+
+```powershell
+dotnet test .\dotnet\tests\SmartHome.Domain.Tests\
+```

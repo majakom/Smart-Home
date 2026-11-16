@@ -31,6 +31,32 @@ jobs:
       - name: Build
         run: dotnet build dotnet/SmartHome.slnx --no-restore --configuration Release
 
+  dotnet-test:
+    name: Test .NET solution
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.203'
+
+      - name: Verify Docker
+        run: docker info
+
+      - name: Restore
+        run: dotnet restore dotnet/SmartHome.slnx
+
+      - name: Build
+        run: dotnet build dotnet/SmartHome.slnx --no-restore --configuration Release
+
+      - name: Run tests
+        run: dotnet test dotnet/SmartHome.slnx --no-build --no-restore --configuration Release --logger "console;verbosity=detailed"
+
   postgres-migrator:
     name: PostgreSQL and migrations
     runs-on: ubuntu-latest

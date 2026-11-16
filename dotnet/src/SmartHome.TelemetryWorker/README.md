@@ -10,7 +10,12 @@ Required settings:
 - `Mqtt__Host`, `Mqtt__Port`, `Mqtt__Credentials__Username`, and `Mqtt__Credentials__Password` for the broker.
 - `Mqtt__Tls__CaCertificatePath`, `Mqtt__Tls__ClientCertificatePath`, and `Mqtt__Tls__ClientKeyPath` for TLS.
 
-`appsettings.json` contains non-secret defaults. Supply settings through environment variables or a root `.env` file. Relative certificate paths resolve from the application output directory; deployments must provide the certificate files. Do not commit credentials or private keys.
+`appsettings.json` contains non-secret defaults. Supply settings through environment variables or a root `.env` file. Relative certificate paths resolve from the application output directory.
+
+For **local development** with the default MQTT settings:
+
+- Set `Mqtt__Credentials__Password` in the root `.env` file; the default username is `dotnet-client.
+- Add `ca.crt`, `client.crt`, and `client.key` to `dotnet/src/SmartHome.TelemetryWorker/certificates/`.
 
 ## Run locally
 
