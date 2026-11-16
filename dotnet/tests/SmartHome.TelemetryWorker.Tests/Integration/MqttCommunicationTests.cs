@@ -18,7 +18,7 @@ namespace SmartHome.TelemetryWorker.Tests.Integration;
 
 public sealed class MqttCommunicationTests : IAsyncLifetime
 {
-    private readonly IContainer _broker = new ContainerBuilder("eclipse-mosquitto:latest")
+    private readonly IContainer _broker = new ContainerBuilder("eclipse-mosquitto:2.1.2-alpine")
         .WithPortBinding(1883, true)
         .WithEntrypoint("sh")
         .WithCommand(

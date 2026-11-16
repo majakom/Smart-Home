@@ -26,23 +26,52 @@ services:
       context: ./dotnet
       dockerfile: src/SmartHome.DbMigrator/Dockerfile
     environment:
-      ConnectionStrings__SmartHome: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-smarthome_postgres};Username=${POSTGRES_USER:-smarthome};Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set in .env}"
+      ConnectionStrings__SmartHome: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-smarthome_postgres};Username=${POSTGRES_USER:-smarthome};Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set in .env};GSS Encryption Mode=Disable"
     depends_on:
       postgres:
         condition: service_healthy
     restart: "no"
 
   mosquitto:
-    image: eclipse-mosquitto:latest
+    image: eclipse-mosquitto:2.1.2-alpine
     container_name: smarthome-mosquitto
     restart: unless-stopped
     ports:
       - "8883:8883"    # MQTTS (secure)
     volumes:
       - ./infrastructure/mosquitto/config:/mosquitto/config
-      - ./infrastructure/mosquitto/certificates:/mosquitto/certificates:ro
+      - ./infrastructure/mosquitto/certificates/ca/ca.crt:/mosquitto/certificates/ca/ca.crt:ro
+      - ./infrastructure/mosquitto/certificates/server/server.crt:/mosquitto/certificates/server/server.crt:ro
+      - ./infrastructure/mosquitto/certificates/server/server.key:/mosquitto/certificates/server/server.key:ro
       - ./infrastructure/mosquitto/data:/mosquitto/data
       - ./infrastructure/mosquitto/log:/mosquitto/log
+
+  telemetry-worker:
+    container_name: smarthome-telemetry-worker
+    build:
+      context: ./dotnet
+      dockerfile: src/SmartHome.TelemetryWorker/Dockerfile
+    restart: unless-stopped
+    environment:
+      # PostgreSQL
+      ConnectionStrings__SmartHome: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-smarthome_postgres};Username=${POSTGRES_USER:-smarthome};Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set in .env};GSS Encryption Mode=Disable"
+
+      # MQTT Broker
+      Mqtt__Host: mosquitto
+      Mqtt__Port: "8883"
+
+      # MQTT Credentials
+      Mqtt__Credentials__Username: ${Mqtt__Credentials__Username:?Mqtt__Credentials__Username is not set in .env}
+      Mqtt__Credentials__Password: ${Mqtt__Credentials__Password:?Mqtt__Credentials__Password is not set in .env}
+    volumes:
+      - ./dotnet/src/SmartHome.TelemetryWorker/certificates:/app/certificates:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      db-migrator:
+        condition: service_completed_successfully
+      mosquitto:
+        condition: service_started
 
 volumes:
   postgres_data:
