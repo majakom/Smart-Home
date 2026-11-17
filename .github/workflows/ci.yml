@@ -123,52 +123,9 @@ jobs:
         run: docker compose config --quiet
 
       - name: Generate temporary Mosquitto TLS credentials
-        run: |
-          mkdir -p \
-            infrastructure/mosquitto/certificates/ca \
-            infrastructure/mosquitto/certificates/server \
-            infrastructure/mosquitto/certificates/client
-          sed 's/<BROKER_LAN_IP>/127.0.0.1/' \
-            infrastructure/mosquitto/certificates/server/server.cnf.example \
-            > infrastructure/mosquitto/certificates/server/server.cnf
-
-          openssl req -x509 -newkey rsa:2048 -nodes -sha256 -days 1 \
-            -keyout infrastructure/mosquitto/certificates/ca/ca.key \
-            -out infrastructure/mosquitto/certificates/ca/ca.crt \
-            -config infrastructure/mosquitto/certificates/ca/ca.cnf \
-            -extensions v3_ca
-          openssl req -new -newkey rsa:2048 -nodes -sha256 \
-            -keyout infrastructure/mosquitto/certificates/server/server.key \
-            -out infrastructure/mosquitto/certificates/server/server.csr \
-            -config infrastructure/mosquitto/certificates/server/server.cnf
-          openssl x509 -req \
-            -in infrastructure/mosquitto/certificates/server/server.csr \
-            -CA infrastructure/mosquitto/certificates/ca/ca.crt \
-            -CAkey infrastructure/mosquitto/certificates/ca/ca.key \
-            -CAcreateserial \
-            -out infrastructure/mosquitto/certificates/server/server.crt \
-            -days 1 -sha256 \
-            -extfile infrastructure/mosquitto/certificates/server/server.cnf \
-            -extensions server_cert
-          openssl req -new -newkey rsa:2048 -nodes -sha256 \
-            -keyout infrastructure/mosquitto/certificates/client/client.key \
-            -out infrastructure/mosquitto/certificates/client/client.csr \
-            -subj "/CN=ci-client"
-          openssl x509 -req \
-            -in infrastructure/mosquitto/certificates/client/client.csr \
-            -CA infrastructure/mosquitto/certificates/ca/ca.crt \
-            -CAkey infrastructure/mosquitto/certificates/ca/ca.key \
-            -CAcreateserial \
-            -out infrastructure/mosquitto/certificates/client/client.crt \
-            -days 1 -sha256 \
-            -extfile infrastructure/mosquitto/certificates/ca/ca.cnf \
-            -extensions client_cert
-          chmod 644 infrastructure/mosquitto/certificates/ca/ca.crt \
-            infrastructure/mosquitto/certificates/ca/ca.key \
-            infrastructure/mosquitto/certificates/server/server.crt \
-            infrastructure/mosquitto/certificates/server/server.key \
-            infrastructure/mosquitto/certificates/client/client.crt \
-            infrastructure/mosquitto/certificates/client/client.key
+        run: | 
+          bash .github/scripts/generate-ci-mqtt-certificates.sh
+        
           chmod -R a+rwX infrastructure/mosquitto/config \
             infrastructure/mosquitto/data infrastructure/mosquitto/log
 
