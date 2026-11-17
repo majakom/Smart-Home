@@ -12,10 +12,11 @@ Required settings:
 
 `appsettings.json` contains non-secret defaults. Supply settings through environment variables or a root `.env` file. Relative certificate paths resolve from the application output directory.
 
-For **local development** with the default MQTT settings:
+**Minimal requirements** for local and docker development with the default MQTT settings:
 
-- Set `Mqtt__Credentials__Password` in the root `.env` file; the default username is `dotnet-client.
-- Add `ca.crt`, `client.crt`, and `client.key` to `dotnet/src/SmartHome.TelemetryWorker/certificates/`.
+- Set `Mqtt__Credentials__Password` in the root `.env` file; the default `Mqtt__Credentials__Username` is `dotnet-client`.
+- Follow the [Mosquitto guide](../../../infrastructure/mosquitto/README.md) to configure the broker credentials and generate the certificates for `dotnet-client`.
+- Add generated `ca.crt`, `client.crt`, and `client.key` to `dotnet/src/SmartHome.TelemetryWorker/certificates/`.
 
 ## Run locally
 
@@ -26,6 +27,17 @@ From the repository root:
 ```powershell
 dotnet run --project .\dotnet\src\SmartHome.TelemetryWorker\SmartHome.TelemetryWorker.csproj
 ```
+
+## Run in a container
+
+Run the Compose service:
+
+```powershell
+docker compose up --build -d telemetry-worker
+```
+
+This service depends on `postgres`, `mosquitto` and `db-migrator` containers, so the command above starts all of them automatically.
+Compose mounts the Worker certificate directory read-only at `/app/certificates/`.
 
 ## Structure and responsibilities
 
