@@ -18,6 +18,7 @@ public class DependencyInjectionTests
         services.AddApplication();
         services.AddSingleton(Substitute.For<ISensorReader>());
         services.AddSingleton(Substitute.For<IDeviceReader>());
+        services.AddSingleton(Substitute.For<IDevicePresenceWriter>());
         services.AddSingleton(Substitute.For<IClimateMeasurementWriter>());
 
         using ServiceProvider serviceProvider = services.BuildServiceProvider(

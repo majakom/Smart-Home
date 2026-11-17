@@ -41,6 +41,9 @@ public class DependencyInjectionTests
         IDeviceReader deviceReader =
             scope1.ServiceProvider.GetRequiredService<IDeviceReader>();
 
+        IDevicePresenceWriter devicePresenceWriter =
+            scope1.ServiceProvider.GetRequiredService<IDevicePresenceWriter>();
+
         ISensorReader sensorReader =
             scope1.ServiceProvider.GetRequiredService<ISensorReader>();
 
@@ -49,6 +52,7 @@ public class DependencyInjectionTests
 
         // Assert
         Assert.IsType<EfDeviceReader>(deviceReader);
+        Assert.IsType<EfDevicePresenceWriter>(devicePresenceWriter);
         Assert.IsType<EfSensorReader>(sensorReader);
         Assert.IsType<EfClimateMeasurementWriter>(measurementWriter);
 
@@ -60,6 +64,11 @@ public class DependencyInjectionTests
         Assert.Same(
             deviceReader,
             scope1.ServiceProvider.GetRequiredService<IDeviceReader>()
+        );
+
+        Assert.Same(
+            devicePresenceWriter,
+            scope1.ServiceProvider.GetRequiredService<IDevicePresenceWriter>()
         );
 
         Assert.Same(
@@ -80,6 +89,11 @@ public class DependencyInjectionTests
         Assert.NotSame(
             deviceReader,
             scope2.ServiceProvider.GetRequiredService<IDeviceReader>()
+        );
+
+        Assert.NotSame(
+            devicePresenceWriter,
+            scope2.ServiceProvider.GetRequiredService<IDevicePresenceWriter>()
         );
 
         Assert.NotSame(

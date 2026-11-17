@@ -7,7 +7,7 @@ Coordinates application workflows using Domain types and abstractions implemente
 ```text
 SmartHome.Application/
 ├── Abstractions/
-│   ├── Devices/       # Device lookup required by telemetry validation
+│   ├── Devices/       # Device lookup and presence-update used by telemetry received
 │   ├── Sensors/       # Sensor lookup required by telemetry validation
 │   └── Telemetry/     # Measurement persistence operation
 ├── UseCases/

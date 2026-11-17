@@ -22,6 +22,7 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString));
 
         services.AddScoped<IDeviceReader, EfDeviceReader>();
+        services.AddScoped<IDevicePresenceWriter, EfDevicePresenceWriter>();
         services.AddScoped<ISensorReader, EfSensorReader>();
         services.AddScoped<IClimateMeasurementWriter, EfClimateMeasurementWriter>();
 

@@ -51,6 +51,12 @@ public class ClimateMeasurementMessageHandlerTests
             cancellationSource.Token
         );
 
+        await fixture.PresenceWriter.Received(1).MarkAsSeenAsync(
+            fixture.Device.Id,
+            Arg.Any<DateTime>(),
+            cancellationSource.Token
+        );
+
         ClimateMeasurement measurement = Assert.IsType<ClimateMeasurement>(fixture.WrittenMeasurement);
 
         Assert.Equal(new SourceMessageId(42), measurement.SourceMessageId);
@@ -90,6 +96,12 @@ public class ClimateMeasurementMessageHandlerTests
             Arg.Any<CancellationToken>()
         );
 
+        await fixture.PresenceWriter.Received(1).MarkAsSeenAsync(
+            fixture.Device.Id,
+            Arg.Any<DateTime>(),
+            Arg.Any<CancellationToken>()
+        );
+
         RecordedLog outcomeLog = Assert.Single(fixture.OutcomeLogger.Entries);
         Assert.Equal(LogLevel.Debug, outcomeLog.Level);
         Assert.Contains("Ignored", outcomeLog.Message);
@@ -115,6 +127,12 @@ public class ClimateMeasurementMessageHandlerTests
         // Assert
         await fixture.Writer.DidNotReceive().TryAddAsync(
             Arg.Any<ClimateMeasurement>(),
+            Arg.Any<CancellationToken>()
+        );
+
+        await fixture.PresenceWriter.DidNotReceive().MarkAsSeenAsync(
+            Arg.Any<DeviceId>(),
+            Arg.Any<DateTime>(),
             Arg.Any<CancellationToken>()
         );
 
@@ -211,6 +229,7 @@ public class ClimateMeasurementMessageHandlerTests
         public Sensor Sensor { get; }
         public TelemetryTopic Topic { get; }
         public IClimateMeasurementWriter Writer { get; }
+        public IDevicePresenceWriter PresenceWriter { get; }
         public ClimateMeasurement? WrittenMeasurement { get; private set; }
         public RecordingLogger<TelemetryOutcomeLogger> OutcomeLogger { get; }
         public RecordingLogger<ClimateMeasurementMessageHandler> HandlerLogger { get; }
@@ -233,6 +252,7 @@ public class ClimateMeasurementMessageHandlerTests
                 SensorCategory.Climate
             );
             Writer = Substitute.For<IClimateMeasurementWriter>();
+            PresenceWriter = Substitute.For<IDevicePresenceWriter>();
             OutcomeLogger = new RecordingLogger<TelemetryOutcomeLogger>();
             HandlerLogger = new RecordingLogger<ClimateMeasurementMessageHandler>();
 
@@ -259,6 +279,7 @@ public class ClimateMeasurementMessageHandlerTests
                 new RecordClimateMeasurementRequestValidator(
                     new TelemetryRequestValidator()),
                 Writer,
+                PresenceWriter,
                 TimeProvider.System
             );
 

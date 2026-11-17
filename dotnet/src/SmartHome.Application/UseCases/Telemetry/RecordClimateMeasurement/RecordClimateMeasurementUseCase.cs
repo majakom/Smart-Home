@@ -1,3 +1,4 @@
+using SmartHome.Application.Abstractions.Devices;
 using SmartHome.Application.Abstractions.Telemetry;
 using SmartHome.Application.UseCases.Telemetry.Shared.Results;
 using SmartHome.Application.UseCases.Telemetry.Shared.Validation;
@@ -11,18 +12,21 @@ public sealed class RecordClimateMeasurementUseCase
     private readonly TelemetrySourceValidator _telemetrySourceValidator;
     private readonly RecordClimateMeasurementRequestValidator _requestValidator;
     private readonly IClimateMeasurementWriter _measurementWriter;
+    private readonly IDevicePresenceWriter _devicePresenceWriter;
     private readonly TimeProvider _timeProvider;
 
     public RecordClimateMeasurementUseCase(
         TelemetrySourceValidator telemetrySourceValidator,
         RecordClimateMeasurementRequestValidator requestValidator,
         IClimateMeasurementWriter measurementWriter,
+        IDevicePresenceWriter devicePresenceWriter,
         TimeProvider timeProvider
     )
     {
         _telemetrySourceValidator = telemetrySourceValidator;
         _requestValidator = requestValidator;
         _measurementWriter = measurementWriter;
+        _devicePresenceWriter = devicePresenceWriter;
         _timeProvider = timeProvider;
     }
 
@@ -49,11 +53,13 @@ public sealed class RecordClimateMeasurementUseCase
             return RecordClimateMeasurementResult.Rejected(rejectionReason);
 
         // 3. Create domain entity
+        DateTime receivedAtUtc = _timeProvider.GetUtcNow().UtcDateTime;
+
         ClimateMeasurement measurement = new ClimateMeasurement(
             request.SourceMessageId,
             request.SensorId,
             request.MeasuredAtUtc,
-            _timeProvider.GetUtcNow().UtcDateTime,
+            receivedAtUtc,
             request.TemperatureCelsius,
             request.RelativeHumidityPercent
         );
@@ -64,7 +70,14 @@ public sealed class RecordClimateMeasurementUseCase
             cancellationToken
         );
 
-        // 5. Return result
+        // 5. Mark device as seen
+        await _devicePresenceWriter.MarkAsSeenAsync(
+            request.DeviceId,
+            receivedAtUtc,
+            cancellationToken
+        );
+
+        // 6. Return result
         if (!added)
             return RecordClimateMeasurementResult.Duplicate();
 

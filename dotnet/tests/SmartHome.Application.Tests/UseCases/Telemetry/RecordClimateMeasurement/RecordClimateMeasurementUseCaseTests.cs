@@ -15,6 +15,7 @@ public class RecordClimateMeasurementUseCaseTests
 {
     private readonly ISensorReader _sensorReader;
     private readonly IDeviceReader _deviceReader;
+    private readonly IDevicePresenceWriter _devicePresenceWriter;
     private readonly IClimateMeasurementWriter _measurementWriter;
     private readonly TimeProvider _timeProvider;
     private readonly TelemetrySourceValidator _telemetrySourceValidator;
@@ -25,6 +26,7 @@ public class RecordClimateMeasurementUseCaseTests
     {
         _sensorReader = Substitute.For<ISensorReader>();
         _deviceReader = Substitute.For<IDeviceReader>();
+        _devicePresenceWriter = Substitute.For<IDevicePresenceWriter>();
         _measurementWriter = Substitute.For<IClimateMeasurementWriter>();
 
         _timeProvider = new FixedTimeProvider(
@@ -38,6 +40,7 @@ public class RecordClimateMeasurementUseCaseTests
             _telemetrySourceValidator,
             _requestValidator,
             _measurementWriter,
+            _devicePresenceWriter,
             _timeProvider
         );
     }
@@ -72,6 +75,12 @@ public class RecordClimateMeasurementUseCaseTests
             Arg.Any<ClimateMeasurement>(),
             Arg.Any<CancellationToken>()
         );
+
+        await _devicePresenceWriter.DidNotReceive().MarkAsSeenAsync(
+            Arg.Any<DeviceId>(),
+            Arg.Any<DateTime>(),
+            Arg.Any<CancellationToken>()
+        );
     }
 
     [Fact]
@@ -97,6 +106,12 @@ public class RecordClimateMeasurementUseCaseTests
             Arg.Any<ClimateMeasurement>(),
             Arg.Any<CancellationToken>()
         );
+
+        await _devicePresenceWriter.DidNotReceive().MarkAsSeenAsync(
+            Arg.Any<DeviceId>(),
+            Arg.Any<DateTime>(),
+            Arg.Any<CancellationToken>()
+        );
     }
 
     [Fact]
@@ -117,6 +132,8 @@ public class RecordClimateMeasurementUseCaseTests
             Arg.Any<CancellationToken>()
         ).Returns(Task.FromResult(false));
 
+        DateTime expectedReceivedAtUtc = _timeProvider.GetUtcNow().UtcDateTime;
+
         // Act
         RecordClimateMeasurementResult result = await _useCase.ExecuteAsync(request);
 
@@ -127,6 +144,12 @@ public class RecordClimateMeasurementUseCaseTests
 
         await _measurementWriter.Received(1).TryAddAsync(
             Arg.Any<ClimateMeasurement>(),
+            Arg.Any<CancellationToken>()
+        );
+
+        await _devicePresenceWriter.Received(1).MarkAsSeenAsync(
+            request.DeviceId,
+            expectedReceivedAtUtc,
             Arg.Any<CancellationToken>()
         );
     }
@@ -178,6 +201,12 @@ public class RecordClimateMeasurementUseCaseTests
             Arg.Any<ClimateMeasurement>(),
             cancellationToken
         );
+
+        await _devicePresenceWriter.Received(1).MarkAsSeenAsync(
+            request.DeviceId,
+            expectedReceivedAtUtc,
+            cancellationToken
+        );
     }
 
     [Fact]
@@ -216,6 +245,12 @@ public class RecordClimateMeasurementUseCaseTests
 
         await _measurementWriter.Received(1).TryAddAsync(
             Arg.Any<ClimateMeasurement>(),
+            cancellationToken
+        );
+
+        await _devicePresenceWriter.Received(1).MarkAsSeenAsync(
+            request.DeviceId,
+            _timeProvider.GetUtcNow().UtcDateTime,
             cancellationToken
         );
     }
