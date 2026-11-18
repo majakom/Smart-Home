@@ -8,4 +8,8 @@ public interface IDeviceReader
         DeviceId deviceId,
         CancellationToken cancellationToken
     );
+
+    Task<IReadOnlyList<Device>> GetAllAsync(
+        CancellationToken cancellationToken
+    );
 }

@@ -74,4 +74,47 @@ public class EfDeviceReaderTests : IAsyncLifetime
         // Assert
         Assert.Null(result);
     }
+
+    [Fact]
+    public async Task GetAllAsync_ReturnsAllDevices()
+    {
+        // Arrange
+        Device firstDevice = new("First Device", "First Model");
+        Device secondDevice = new("Second Device", "Second Model");
+
+        _dbContext.Devices.AddRange(firstDevice, secondDevice);
+        await _dbContext.SaveChangesAsync();
+
+        EfDeviceReader reader = new(_dbContext);
+
+        // Act
+        IReadOnlyList<Device> result = await reader.GetAllAsync(CancellationToken.None);
+
+        // Assert
+        Assert.Equal(2, result.Count);
+
+        Assert.Contains(result, device => device.Id == firstDevice.Id);
+        Assert.Contains(result, device => device.Id == secondDevice.Id);
+
+        Assert.All(
+            result,
+            device => Assert.Equal(
+                EntityState.Detached,
+                _dbContext.Entry(device).State
+            )
+        );
+    }
+
+    [Fact]
+    public async Task GetAllAsync_ReturnsEmptyCollection_WhenNoDevicesExist()
+    {
+        // Arrange
+        EfDeviceReader reader = new(_dbContext);
+
+        // Act
+        IReadOnlyList<Device> result = await reader.GetAllAsync(CancellationToken.None);
+
+        // Assert
+        Assert.Empty(result);
+    }
 }

@@ -25,4 +25,13 @@ public sealed class EfSensorReader : ISensorReader
                 cancellationToken
             );
     }
+
+    public async Task<IReadOnlyList<Sensor>> GetAllAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        return await _dbContext.Sensors
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
 }

@@ -8,4 +8,8 @@ public interface ISensorReader
         SensorId sensorId,
         CancellationToken cancellationToken
     );
+
+    Task<IReadOnlyList<Sensor>> GetAllAsync(
+        CancellationToken cancellationToken
+    );
 }

@@ -21,9 +21,12 @@ public static class DependencyInjection
         services.AddDbContext<SmartHomeDbContext>(options =>
             options.UseNpgsql(connectionString));
 
-        services.AddScoped<IDeviceReader, EfDeviceReader>();
         services.AddScoped<IDevicePresenceWriter, EfDevicePresenceWriter>();
+        services.AddScoped<IDeviceReader, EfDeviceReader>();
+        
         services.AddScoped<ISensorReader, EfSensorReader>();
+
+        services.AddScoped<IClimateMeasurementReader, EfClimateMeasurementReader>();
         services.AddScoped<IClimateMeasurementWriter, EfClimateMeasurementWriter>();
 
         return services;
