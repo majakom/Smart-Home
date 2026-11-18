@@ -6,8 +6,9 @@ Local services are defined in the root `docker-compose.yml`. Run Docker Compose 
 
 - [PostgreSQL](infrastructure/postgres/README.md) — environment variables, startup, and persistent storage.
 - [Mosquitto](infrastructure/mosquitto/README.md) — TLS certificates, broker credentials, and client connection tests.
+- [Telemetry Worker](dotnet/src/SmartHome.TelemetryWorker/README.md) — local and Docker operation.
 
-Before starting the stack, copy `.env.example` to `.env` in the repository root and set `POSTGRES_PASSWORD`. The PostgreSQL guide describes the available environment variables. Configure Mosquitto certificates and credentials by following its guide.
+Before starting the stack, copy `.env.example` to `.env` in the repository root and set `POSTGRES_PASSWORD` and and `Mqtt__Credentials__Password`. Configure Mosquitto certificates and credentials by following its guide. The Telemetry Worker requires its own `ca.crt`, `client.crt`, and `client.key` under `dotnet/src/SmartHome.TelemetryWorker/certificates/`.
 
 ## Run the stack
 
@@ -29,4 +30,20 @@ Stop the services while preserving named-volume data:
 
 ```powershell
 docker compose down
+```
+
+## Run .NET tests
+
+Prerequisites: .NET 10 SDK and Docker running. Infrastructure tests use Testcontainers to start PostgreSQL and Mosquitto containers, so Docker must be available even when you are not running the full Compose stack.
+
+From the repository root, run all tests in the solution:
+
+```powershell
+dotnet test .\dotnet\SmartHome.slnx
+```
+
+To run a single test project, for example:
+
+```powershell
+dotnet test .\dotnet\tests\SmartHome.Domain.Tests\
 ```

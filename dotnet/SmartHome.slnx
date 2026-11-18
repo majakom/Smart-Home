@@ -8,4 +8,10 @@
     <Project Path="src/SmartHome.TelemetryWorker/SmartHome.TelemetryWorker.csproj" />
     <Project Path="src/SmartHome.Web/SmartHome.Web.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SmartHome.Application.Tests/SmartHome.Application.Tests.csproj" />
+    <Project Path="tests/SmartHome.Domain.Tests/SmartHome.Domain.Tests.csproj" />
+    <Project Path="tests/SmartHome.Infrastructure.Tests/SmartHome.Infrastructure.Tests.csproj" />
+    <Project Path="tests/SmartHome.TelemetryWorker.Tests/SmartHome.TelemetryWorker.Tests.csproj" />
+  </Folder>
 </Solution>

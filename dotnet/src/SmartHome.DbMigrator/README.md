@@ -37,3 +37,14 @@ docker compose run --build db-migrator
 ```
 
 Compose waits for PostgreSQL to become healthy and supplies `ConnectionStrings__SmartHome` with `Host=postgres`. The command builds the migrator image and applies pending migrations. With `--rm`, the stopped container is removed; without it, find the container with `docker compose ps -a` and read its output with `docker compose logs db-migrator`. The command's exit code is `0` on success and nonzero on failure.
+
+## Structure and responsibilities
+
+```text
+SmartHome.DbMigrator/
+├── Dockerfile                    # Container image build
+├── Program.cs                    # Applies pending migrations, then exits
+└── SmartHome.DbMigrator.csproj   # Executable and project references
+```
+
+The migrator requires `ConnectionStrings__SmartHome`; it has no application-specific configuration files.
