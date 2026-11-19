@@ -6,7 +6,7 @@ using Testcontainers.PostgreSql;
 
 namespace SmartHome.Infrastructure.Tests.Persistence.Adapters.Devices;
 
-public class EfDeviceReaderTests : IAsyncLifetime
+public sealed class EfDeviceReaderTests : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:18").Build();
     
