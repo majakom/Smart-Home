@@ -1,6 +1,9 @@
-@SmartHome.Api_HostAddress = http://localhost:5243
+@SmartHomeApi_HostAddress = https://localhost:5001
 
-GET {{SmartHome.Api_HostAddress}}/weatherforecast/
+### Health check
+GET {{SmartHomeApi_HostAddress}}/health
 Accept: application/json
 
-###
+### OpenAPI document
+GET {{SmartHomeApi_HostAddress}}/openapi/v1.json
+Accept: application/json

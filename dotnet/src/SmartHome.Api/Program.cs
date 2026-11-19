@@ -1,41 +1,48 @@
-var builder = WebApplication.CreateBuilder(args);
+using DotNetEnv;
+using Scalar.AspNetCore;
+using SmartHome.Application;
+using SmartHome.Infrastructure;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public partial class Program
 {
-    app.MapOpenApi();
-}
+    private static async Task Main(string[] args)
+    {
+        Env.NoClobber().TraversePath().Load();
+        
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-app.UseHttpsRedirection();
+        // OpenAPI
+        builder.Services.AddOpenApi();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+        string connectionString =
+            builder.Configuration.GetConnectionString("SmartHome")
+            ?? throw new InvalidOperationException(
+                "Connection string 'SmartHome' is not configured."
+            );
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+        builder.Services.AddApplication();
+        builder.Services.AddInfrastructure(connectionString);
 
-app.Run();
+        WebApplication app = builder.Build();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        // Development tools
+        if (app.Environment.IsDevelopment())
+        {
+            app.MapOpenApi();
+            app.MapScalarApiReference();
+        }
+
+
+
+        app.UseHttpsRedirection();
+
+        app.MapGet("/health", () => Results.Ok(new
+        {
+            Status = "Healthy"
+        }))
+        .WithName("HealthCheck")
+        .WithSummary("Checks API health");
+
+        await app.RunAsync();
+    }
 }
