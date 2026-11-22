@@ -9,6 +9,7 @@
     <Project Path="src/SmartHome.Web/SmartHome.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/SmartHome.Api.Tests/SmartHome.Api.Tests.csproj" />
     <Project Path="tests/SmartHome.Application.Tests/SmartHome.Application.Tests.csproj" />
     <Project Path="tests/SmartHome.Domain.Tests/SmartHome.Domain.Tests.csproj" />
     <Project Path="tests/SmartHome.Infrastructure.Tests/SmartHome.Infrastructure.Tests.csproj" />
