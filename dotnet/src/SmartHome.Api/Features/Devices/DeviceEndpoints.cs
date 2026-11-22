@@ -14,6 +14,13 @@ public static class DeviceEndpoints
             .WithSummary("Gets all registered devices")
             .Produces<IReadOnlyList<DeviceResponse>>(StatusCodes.Status200OK);
 
+        group.MapGet("/{deviceId}", GetDeviceById.GetDeviceByIdEndpoint.Handle)
+            .WithName("GetDeviceById")
+            .WithSummary("Gets a device by its ID")
+            .Produces<DeviceResponse>(StatusCodes.Status200OK)
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound);
+
         return app;
     }
 }

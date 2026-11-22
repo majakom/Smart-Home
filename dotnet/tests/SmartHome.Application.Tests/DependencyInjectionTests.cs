@@ -3,6 +3,7 @@ using NSubstitute;
 using SmartHome.Application.Abstractions.Devices;
 using SmartHome.Application.Abstractions.Sensors;
 using SmartHome.Application.Abstractions.Telemetry;
+using SmartHome.Application.UseCases.Devices.GetDeviceById;
 using SmartHome.Application.UseCases.Devices.GetDevices;
 using SmartHome.Application.UseCases.Telemetry.RecordClimateMeasurement;
 using SmartHome.Application.UseCases.Telemetry.Shared.Validation;
@@ -33,28 +34,39 @@ public class DependencyInjectionTests
         // Act
         using IServiceScope scope1 = serviceProvider.CreateScope();
         using IServiceScope scope2 = serviceProvider.CreateScope();
-
-        RecordClimateMeasurementUseCase? recordClimateMeasurementUseCase = 
-            scope1.ServiceProvider.GetService<RecordClimateMeasurementUseCase>();
-
-        TelemetrySourceValidator? sourceValidator = 
-            scope1.ServiceProvider.GetService<TelemetrySourceValidator>();
-
-        RecordClimateMeasurementRequestValidator? requestValidator = 
-            scope1.ServiceProvider.GetService<RecordClimateMeasurementRequestValidator>();
         
         TelemetryRequestValidator? telemetryRequestValidator = 
             scope1.ServiceProvider.GetService<TelemetryRequestValidator>();
 
+        RecordClimateMeasurementRequestValidator? recordClimateMeasurementRequestValidator = 
+            scope1.ServiceProvider.GetService<RecordClimateMeasurementRequestValidator>();
+
+        GetDeviceByIdUseCase? getDeviceByIdUse =
+            scope1.ServiceProvider.GetService<GetDeviceByIdUseCase>();
+
         GetDevicesUseCase? getDevicesUseCase =
             scope1.ServiceProvider.GetService<GetDevicesUseCase>();
 
+        TelemetrySourceValidator? telemetrySourceValidator = 
+            scope1.ServiceProvider.GetService<TelemetrySourceValidator>();
+
+        RecordClimateMeasurementUseCase? recordClimateMeasurementUseCase = 
+            scope1.ServiceProvider.GetService<RecordClimateMeasurementUseCase>();
+
         // Assert
-        Assert.NotNull(recordClimateMeasurementUseCase);
-        Assert.NotNull(sourceValidator);
-        Assert.NotNull(requestValidator);
         Assert.NotNull(telemetryRequestValidator);
+        Assert.NotNull(recordClimateMeasurementRequestValidator);
+
+        Assert.NotNull(getDeviceByIdUse);
         Assert.NotNull(getDevicesUseCase);
+        
+        Assert.NotNull(telemetrySourceValidator);
+        Assert.NotNull(recordClimateMeasurementUseCase);
+
+        Assert.Same(
+            scope1.ServiceProvider.GetRequiredService<TimeProvider>(),
+            scope2.ServiceProvider.GetRequiredService<TimeProvider>()
+        );
 
         Assert.Same(
             telemetryRequestValidator,
@@ -62,28 +74,28 @@ public class DependencyInjectionTests
         );
 
         Assert.Same(
-            requestValidator,
+            recordClimateMeasurementRequestValidator,
             scope2.ServiceProvider.GetRequiredService<RecordClimateMeasurementRequestValidator>()
         );
 
-        Assert.Same(
-            scope1.ServiceProvider.GetRequiredService<TimeProvider>(),
-            scope2.ServiceProvider.GetRequiredService<TimeProvider>()
+        Assert.NotSame(
+            getDeviceByIdUse,
+            scope2.ServiceProvider.GetRequiredService<GetDeviceByIdUseCase>()
         );
 
         Assert.NotSame(
-            sourceValidator,
+            getDevicesUseCase,
+            scope2.ServiceProvider.GetRequiredService<GetDevicesUseCase>()
+        );
+
+        Assert.NotSame(
+            telemetrySourceValidator,
             scope2.ServiceProvider.GetRequiredService<TelemetrySourceValidator>()
         );
 
         Assert.NotSame(
             recordClimateMeasurementUseCase,
             scope2.ServiceProvider.GetRequiredService<RecordClimateMeasurementUseCase>()
-        );
-
-        Assert.NotSame(
-            getDevicesUseCase,
-            scope2.ServiceProvider.GetRequiredService<GetDevicesUseCase>()
         );
     }
 }

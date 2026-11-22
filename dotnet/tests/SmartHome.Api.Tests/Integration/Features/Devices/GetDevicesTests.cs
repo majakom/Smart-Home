@@ -37,8 +37,6 @@ public class GetDevicesTests : IClassFixture<ApiFactory>, IDisposable
     public async Task GetDevices_ReturnsOkWithDevices()
     {
         // Arrange
-        _deviceReader.ClearReceivedCalls();
-
         Device firstDevice = new("Device Name A", "Device Model A");
         Device secondDevice = new("Device Name B", "Device Model B");
 
@@ -92,8 +90,6 @@ public class GetDevicesTests : IClassFixture<ApiFactory>, IDisposable
     public async Task GetDevices_ReturnsOkWithEmptyCollection()
     {
         // Arrange
-        _deviceReader.ClearReceivedCalls();
-
         _deviceReader.GetAllAsync(
             Arg.Any<CancellationToken>()
         ).Returns(Task.FromResult<IReadOnlyList<Device>>([]));
@@ -120,8 +116,6 @@ public class GetDevicesTests : IClassFixture<ApiFactory>, IDisposable
     public async Task GetDevices_ReturnsInternalServerError_WhenUseCaseThrows()
     {
         // Arrange
-        _deviceReader.ClearReceivedCalls();
-
         _deviceReader.GetAllAsync(
             Arg.Any<CancellationToken>()
         ).Returns(Task.FromException<IReadOnlyList<Device>>(
