@@ -1,6 +1,7 @@
 using DotNetEnv;
 using Scalar.AspNetCore;
 using SmartHome.Api.ErrorHandling;
+using SmartHome.Api.Features.Devices;
 using SmartHome.Application;
 using SmartHome.Infrastructure;
 
@@ -48,6 +49,8 @@ public partial class Program
         }))
         .WithName("HealthCheck")
         .WithSummary("Checks API health");
+
+        app.MapDeviceEndpoints();
 
         await app.RunAsync();
     }

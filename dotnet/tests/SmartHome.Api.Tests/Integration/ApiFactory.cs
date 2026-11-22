@@ -1,11 +1,13 @@
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SmartHome.Api.Tests.Integration;
 
-public sealed class ApiFactory : WebApplicationFactory<Program>
+public class ApiFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -19,5 +21,13 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
                 }
             );
         });
+
+        builder.ConfigureTestServices(ConfigureAdditionalServices);
+    }
+
+    protected virtual void ConfigureAdditionalServices(
+        IServiceCollection services
+    )
+    {
     }
 }
