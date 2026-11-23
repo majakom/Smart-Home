@@ -38,8 +38,6 @@ public class GetSensorsTests : IClassFixture<ApiFactory>, IDisposable
     public async Task GetSensors_ReturnsOkWithSensors()
     {
         // Arrange
-        _sensorReader.ClearReceivedCalls();
-
         Sensor firstSensor = new Sensor(DeviceId.New(), SensorCategory.Climate, "Sensor Name A", "Sensor Model A", "SN12345");
         Sensor secondSensor = new Sensor(DeviceId.New(), SensorCategory.Climate, "Sensor Name B", "Sensor Model B");
 
@@ -94,8 +92,6 @@ public class GetSensorsTests : IClassFixture<ApiFactory>, IDisposable
     public async Task GetSensors_ReturnsOkWithEmptyCollection()
     {
         // Arrange
-        _sensorReader.ClearReceivedCalls();
-
         _sensorReader.GetAllAsync(
             Arg.Any<CancellationToken>()
         ).Returns(Task.FromResult<IReadOnlyList<Sensor>>([]));
@@ -121,8 +117,6 @@ public class GetSensorsTests : IClassFixture<ApiFactory>, IDisposable
     public async Task GetSensors_ReturnsInternalServerError_WhenUseCaseThrows()
     {
         // Arrange
-        _sensorReader.ClearReceivedCalls();
-
         _sensorReader.GetAllAsync(
             Arg.Any<CancellationToken>()
         ).Returns(Task.FromException<IReadOnlyList<Sensor>>(

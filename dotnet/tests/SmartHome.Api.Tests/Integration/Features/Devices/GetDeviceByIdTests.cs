@@ -100,6 +100,46 @@ public class GetDeviceByIdTests : IClassFixture<ApiFactory>, IDisposable
     }
 
     [Fact]
+    public async Task GetDeviceById_ReturnsBadRequest_WhenDeviceIdIsInvalid()
+    {
+        // Arrange
+        string invalidDeviceId = "invalid-guid";
+
+        // Act
+        using HttpResponseMessage response = await _client.GetAsync(
+            $"/api/devices/{invalidDeviceId}"
+        );
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            response.Content.Headers.ContentType?.MediaType
+        );
+
+        string content = await response.Content.ReadAsStringAsync();
+        using JsonDocument json = JsonDocument.Parse(content);
+
+        JsonElement result = json.RootElement;
+
+        Assert.Equal(JsonValueKind.Object, result.ValueKind);
+
+        JsonElement errors = result.GetProperty("errors");
+        JsonElement deviceIdErrors = errors.GetProperty("deviceId");
+       
+        Assert.Equal(JsonValueKind.Array, deviceIdErrors.ValueKind);
+        Assert.Equal(
+            "The device ID must be a valid GUID.",
+            Assert.Single(deviceIdErrors.EnumerateArray()).GetString()
+        );
+
+        await _deviceReader.DidNotReceive().GetByIdAsync(
+            Arg.Any<DeviceId>(),
+            Arg.Any<CancellationToken>()
+        );
+    }
+
+    [Fact]
     public async Task GetDeviceById_ReturnsInternalServerError_WhenUseCaseThrows()
     {
         // Arrange
@@ -138,7 +178,7 @@ public class GetDeviceByIdTests : IClassFixture<ApiFactory>, IDisposable
         );
     }
 
-    void IDisposable.Dispose()
+    public void Dispose()
     {
         _client.Dispose();
         _testFactory.Dispose();

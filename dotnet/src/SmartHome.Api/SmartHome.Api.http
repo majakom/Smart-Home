@@ -1,4 +1,6 @@
 @SmartHomeApi_HostAddress = https://localhost:5001
+@deviceId = 00000000-0000-0000-0000-000000000001
+@sensorId = 00000000-0000-0000-0000-000000000002
 
 ### Health check
 GET {{SmartHomeApi_HostAddress}}/health
@@ -6,4 +8,24 @@ Accept: application/json
 
 ### OpenAPI document
 GET {{SmartHomeApi_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+### Devices
+
+### Get all devices
+GET {{SmartHomeApi_HostAddress}}/api/devices
+Accept: application/json
+
+### Get device by ID
+GET {{SmartHomeApi_HostAddress}}/api/devices/{{deviceId}}
+Accept: application/json
+
+### Sensors
+
+### Get all sensors
+GET {{SmartHomeApi_HostAddress}}/api/sensors
+Accept: application/json
+
+### Get sensor by ID
+GET {{SmartHomeApi_HostAddress}}/api/sensors/{{sensorId}}
 Accept: application/json

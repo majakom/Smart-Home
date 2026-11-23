@@ -5,6 +5,7 @@ using SmartHome.Application.Abstractions.Sensors;
 using SmartHome.Application.Abstractions.Telemetry;
 using SmartHome.Application.UseCases.Devices.GetDeviceById;
 using SmartHome.Application.UseCases.Devices.GetDevices;
+using SmartHome.Application.UseCases.Sensors.GetSensorById;
 using SmartHome.Application.UseCases.Sensors.GetSensors;
 using SmartHome.Application.UseCases.Telemetry.RecordClimateMeasurement;
 using SmartHome.Application.UseCases.Telemetry.Shared.Validation;
@@ -48,6 +49,9 @@ public class DependencyInjectionTests
         GetDevicesUseCase? getDevicesUseCase =
             scope1.ServiceProvider.GetService<GetDevicesUseCase>();
 
+        GetSensorByIdUseCase? getSensorByIdUseCase =
+            scope1.ServiceProvider.GetService<GetSensorByIdUseCase>();
+
         GetSensorsUseCase? getSensorsUseCase =
             scope1.ServiceProvider.GetService<GetSensorsUseCase>();
 
@@ -64,6 +68,7 @@ public class DependencyInjectionTests
         Assert.NotNull(getDeviceByIdUse);
         Assert.NotNull(getDevicesUseCase);
 
+        Assert.NotNull(getSensorByIdUseCase);
         Assert.NotNull(getSensorsUseCase);
         
         Assert.NotNull(telemetrySourceValidator);
@@ -92,6 +97,11 @@ public class DependencyInjectionTests
         Assert.NotSame(
             getDevicesUseCase,
             scope2.ServiceProvider.GetRequiredService<GetDevicesUseCase>()
+        );
+
+        Assert.NotSame(
+            getSensorByIdUseCase,
+            scope2.ServiceProvider.GetRequiredService<GetSensorByIdUseCase>()
         );
 
         Assert.NotSame(

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using SmartHome.Application.UseCases.Devices.GetDeviceById;
 using SmartHome.Application.UseCases.Devices.GetDevices;
+using SmartHome.Application.UseCases.Sensors.GetSensorById;
 using SmartHome.Application.UseCases.Sensors.GetSensors;
 using SmartHome.Application.UseCases.Telemetry.RecordClimateMeasurement;
 using SmartHome.Application.UseCases.Telemetry.Shared.Validation;
@@ -21,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<GetDeviceByIdUseCase>();
         services.AddScoped<GetDevicesUseCase>();
 
+        services.AddScoped<GetSensorByIdUseCase>();
         services.AddScoped<GetSensorsUseCase>();
 
         services.AddScoped<TelemetrySourceValidator>();

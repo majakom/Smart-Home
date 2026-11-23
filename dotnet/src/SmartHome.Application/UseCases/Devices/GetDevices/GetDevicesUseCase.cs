@@ -12,10 +12,10 @@ public sealed class GetDevicesUseCase
         _deviceReader = deviceReader;
     }
 
-    public async Task<IReadOnlyList<Device>> ExecuteAsync(
+    public Task<IReadOnlyList<Device>> ExecuteAsync(
         CancellationToken cancellationToken = default
     )
     {
-        return await _deviceReader.GetAllAsync(cancellationToken);
+        return _deviceReader.GetAllAsync(cancellationToken);
     }
 }

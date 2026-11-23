@@ -14,6 +14,13 @@ public static class SensorEndpoints
             .WithSummary("Get all registered sensors")
             .Produces<IReadOnlyList<SensorResponse>>(StatusCodes.Status200OK);
         
+        group.MapGet("/{sensorId}", GetSensorById.GetSensorByIdEndpoint.Handle)
+            .WithName("GetSensorById")
+            .WithSummary("Gets a sensor by its ID")
+            .Produces<SensorResponse>(StatusCodes.Status200OK)
+            .ProducesValidationProblem(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound);
+
         return app;
     }
 }
