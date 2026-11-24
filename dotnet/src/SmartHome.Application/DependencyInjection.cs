@@ -29,7 +29,7 @@ public static class DependencyInjection
         services.AddScoped<GetSensorsUseCase>();
 
         services.AddScoped<TelemetryQuerySensorValidator>();
-        services.AddScoped<GetSenssorClimateMeasurementsUseCase>();
+        services.AddScoped<GetSensorClimateMeasurementsUseCase>();
 
         services.AddScoped<TelemetrySourceValidator>();
         services.AddScoped<RecordClimateMeasurementUseCase>();

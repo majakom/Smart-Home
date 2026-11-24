@@ -7,12 +7,12 @@ public sealed record GetSensorClimateMeasurementsResult
 {
    public TelemetryQueryOutcome Outcome { get; }
    public TelemetryQueryFailureReason? FailureReason { get; }
-   public IReadOnlyList<ClimateMeasurement>? Measurements { get; }
+   public IReadOnlyList<ClimateMeasurement> Measurements { get; }
 
    private GetSensorClimateMeasurementsResult(
        TelemetryQueryOutcome outcome,
        TelemetryQueryFailureReason? failureReason,
-       IReadOnlyList<ClimateMeasurement>? measurements)
+       IReadOnlyList<ClimateMeasurement> measurements)
    {
        Outcome = outcome;
        FailureReason = failureReason;
@@ -21,7 +21,7 @@ public sealed record GetSensorClimateMeasurementsResult
 
     public static GetSensorClimateMeasurementsResult Success(
        IReadOnlyList<ClimateMeasurement> measurements) =>
-       new(TelemetryQueryOutcome.Succceeded, null, measurements);
+       new(TelemetryQueryOutcome.Succeeded, null, measurements);
 
     public static GetSensorClimateMeasurementsResult Failure(
         TelemetryQueryFailureReason reason) =>

@@ -18,6 +18,7 @@ public class EfClimateMeasurementReader : IClimateMeasurementReader
         SensorId sensorId,
         DateTime fromUtc,
         DateTime toUtc,
+        int limit,
         CancellationToken cancellationToken
     )
     {
@@ -27,7 +28,10 @@ public class EfClimateMeasurementReader : IClimateMeasurementReader
                 measurement.SensorId == sensorId &&
                 measurement.MeasuredAtUtc >= fromUtc &&
                 measurement.MeasuredAtUtc <= toUtc
-            ).OrderBy(measurement => measurement.MeasuredAtUtc)
+            )
+            .OrderBy(measurement => measurement.MeasuredAtUtc)
+            .ThenBy(measurement => measurement.Id)
+            .Take(limit)
             .ToListAsync(cancellationToken);
     }
 }

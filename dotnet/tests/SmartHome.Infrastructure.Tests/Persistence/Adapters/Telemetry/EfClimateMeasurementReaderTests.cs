@@ -76,6 +76,7 @@ public class EfClimateMeasurementReaderTests : IAsyncLifetime
                 sensor.Id,
                 fromUtc,
                 toUtc,
+                100,
                 CancellationToken.None
             );
 
@@ -92,6 +93,135 @@ public class EfClimateMeasurementReaderTests : IAsyncLifetime
                 _dbContext.Entry(measurement).State
             )
         );
+    }
+
+    [Fact]
+    public async Task GetBySensorIdAsync_ReturnsNoMoreThanLimit()
+    {
+        // Arrange
+        Device device = new("Device Name", "Device Model");
+        Sensor sensor = new(device.Id, SensorCategory.Climate, "Sensor Name", "Sensor Model");
+
+        DateTime fromUtc = new(2026, 6, 6, 10, 0, 0, DateTimeKind.Utc);
+        DateTime toUtc = fromUtc.AddHours(1);
+
+        ClimateMeasurement[] measurements =
+        [
+            new(new SourceMessageId(1), sensor.Id, fromUtc.AddMinutes(10), fromUtc.AddMinutes(11), 20m, 40m),
+            new(new SourceMessageId(2), sensor.Id, fromUtc.AddMinutes(20), fromUtc.AddMinutes(21), 21m, 41m),
+            new(new SourceMessageId(3), sensor.Id, fromUtc.AddMinutes(30), fromUtc.AddMinutes(31), 22m, 42m)
+        ];
+
+        _dbContext.Devices.Add(device);
+        _dbContext.Sensors.Add(sensor);
+        _dbContext.ClimateMeasurements.AddRange(measurements);
+        await _dbContext.SaveChangesAsync();
+
+        EfClimateMeasurementReader reader = new(_dbContext);
+        const int limit = 2;
+
+        // Act
+        IReadOnlyList<ClimateMeasurement> result =
+            await reader.GetBySensorIdAsync(
+                sensor.Id,
+                fromUtc,
+                toUtc,
+                limit,
+                CancellationToken.None
+            );
+
+        // Assert
+        Assert.Equal(limit, result.Count);
+    }
+
+    [Fact]
+    public async Task GetBySensorIdAsync_ReturnsEarliestMeasurementsUpToLimit()
+    {
+        // Arrange
+        Device device = new("Device Name", "Device Model");
+        Sensor sensor = new(device.Id, SensorCategory.Climate, "Sensor Name", "Sensor Model");
+
+        DateTime fromUtc = new(2026, 6, 6, 10, 0, 0, DateTimeKind.Utc);
+        DateTime toUtc = fromUtc.AddHours(1);
+
+        ClimateMeasurement latestMeasurement = new(
+            new SourceMessageId(1), sensor.Id, fromUtc.AddMinutes(30), fromUtc.AddMinutes(31), 22m, 42m);
+        ClimateMeasurement earliestMeasurement = new(
+            new SourceMessageId(2), sensor.Id, fromUtc.AddMinutes(10), fromUtc.AddMinutes(11), 20m, 40m);
+        ClimateMeasurement middleMeasurement = new(
+            new SourceMessageId(3), sensor.Id, fromUtc.AddMinutes(20), fromUtc.AddMinutes(21), 21m, 41m);
+
+        _dbContext.Devices.Add(device);
+        _dbContext.Sensors.Add(sensor);
+        _dbContext.ClimateMeasurements.AddRange(
+            latestMeasurement,
+            earliestMeasurement,
+            middleMeasurement
+        );
+        await _dbContext.SaveChangesAsync();
+
+        EfClimateMeasurementReader reader = new(_dbContext);
+        const int limit = 2;
+
+        // Act
+        IReadOnlyList<ClimateMeasurement> result =
+            await reader.GetBySensorIdAsync(
+                sensor.Id,
+                fromUtc,
+                toUtc,
+                limit,
+                CancellationToken.None
+            );
+
+        // Assert
+        Assert.Equal(limit, result.Count);
+        Assert.Equal(earliestMeasurement.Id, result[0].Id);
+        Assert.Equal(middleMeasurement.Id, result[1].Id);
+    }
+
+    [Fact]
+    public async Task GetBySensorIdAsync_OrdersByMeasuredAtUtcThenId()
+    {
+        // Arrange
+        Device device = new("Device Name", "Device Model");
+        Sensor sensor = new(device.Id, SensorCategory.Climate, "Sensor Name", "Sensor Model");
+
+        DateTime fromUtc = new(2026, 6, 6, 10, 0, 0, DateTimeKind.Utc);
+        DateTime toUtc = fromUtc.AddHours(1);
+        DateTime sameMeasuredAtUtc = fromUtc.AddMinutes(10);
+
+        ClimateMeasurement laterMeasurement = new(
+            new SourceMessageId(1), sensor.Id, fromUtc.AddMinutes(20), fromUtc.AddMinutes(21), 22m, 42m);
+        ClimateMeasurement firstAtSameTime = new(
+            new SourceMessageId(2), sensor.Id, sameMeasuredAtUtc, fromUtc.AddMinutes(11), 20m, 40m);
+        ClimateMeasurement secondAtSameTime = new(
+            new SourceMessageId(3), sensor.Id, sameMeasuredAtUtc, fromUtc.AddMinutes(12), 21m, 41m);
+
+        _dbContext.Devices.Add(device);
+        _dbContext.Sensors.Add(sensor);
+        _dbContext.ClimateMeasurements.AddRange(
+            laterMeasurement,
+            firstAtSameTime,
+            secondAtSameTime
+        );
+        await _dbContext.SaveChangesAsync();
+
+        EfClimateMeasurementReader reader = new(_dbContext);
+
+        // Act
+        IReadOnlyList<ClimateMeasurement> result =
+            await reader.GetBySensorIdAsync(
+                sensor.Id,
+                fromUtc,
+                toUtc,
+                100,
+                CancellationToken.None
+            );
+
+            // Assert
+        Assert.Equal(
+            [firstAtSameTime.Id, secondAtSameTime.Id, laterMeasurement.Id],
+            result.Select(measurement => measurement.Id));
     }
 
     [Fact]
@@ -138,6 +268,7 @@ public class EfClimateMeasurementReaderTests : IAsyncLifetime
                 firstSensor.Id,
                 fromUtc,
                 toUtc,
+                100,
                 CancellationToken.None
             );
 
@@ -163,6 +294,7 @@ public class EfClimateMeasurementReaderTests : IAsyncLifetime
                 sensorId,
                 fromUtc,
                 toUtc,
+                100,
                 CancellationToken.None
             );
 
@@ -237,6 +369,7 @@ public class EfClimateMeasurementReaderTests : IAsyncLifetime
                 sensor.Id,
                 fromUtc,
                 toUtc,
+                100,
                 CancellationToken.None
             );
 

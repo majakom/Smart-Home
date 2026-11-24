@@ -9,6 +9,7 @@ public interface IClimateMeasurementReader
         SensorId sensorId,
         DateTime fromUtc,
         DateTime toUtc,
+        int limit,
         CancellationToken cancellationToken
     );
 }

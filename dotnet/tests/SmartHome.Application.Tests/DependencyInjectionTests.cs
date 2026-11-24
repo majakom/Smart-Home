@@ -7,6 +7,7 @@ using SmartHome.Application.UseCases.Devices.GetDeviceById;
 using SmartHome.Application.UseCases.Devices.GetDevices;
 using SmartHome.Application.UseCases.Sensors.GetSensorById;
 using SmartHome.Application.UseCases.Sensors.GetSensors;
+using SmartHome.Application.UseCases.Telemetry.GetSensorClimateMeasurements;
 using SmartHome.Application.UseCases.Telemetry.RecordClimateMeasurement;
 using SmartHome.Application.UseCases.Telemetry.Shared.Validation;
 
@@ -23,6 +24,7 @@ public class DependencyInjectionTests
         services.AddSingleton(Substitute.For<ISensorReader>());
         services.AddSingleton(Substitute.For<IDeviceReader>());
         services.AddSingleton(Substitute.For<IDevicePresenceWriter>());
+        services.AddSingleton(Substitute.For<IClimateMeasurementReader>());
         services.AddSingleton(Substitute.For<IClimateMeasurementWriter>());
 
         using ServiceProvider serviceProvider = services.BuildServiceProvider(
@@ -37,6 +39,9 @@ public class DependencyInjectionTests
         using IServiceScope scope1 = serviceProvider.CreateScope();
         using IServiceScope scope2 = serviceProvider.CreateScope();
         
+        TelemetryQueryValidator? telemetryQueryValidator =
+            scope1.ServiceProvider.GetService<TelemetryQueryValidator>();
+
         TelemetryRequestValidator? telemetryRequestValidator = 
             scope1.ServiceProvider.GetService<TelemetryRequestValidator>();
 
@@ -55,6 +60,12 @@ public class DependencyInjectionTests
         GetSensorsUseCase? getSensorsUseCase =
             scope1.ServiceProvider.GetService<GetSensorsUseCase>();
 
+        TelemetryQuerySensorValidator? telemetryQuerySensorValidator =
+            scope1.ServiceProvider.GetService<TelemetryQuerySensorValidator>();
+
+        GetSensorClimateMeasurementsUseCase? getSensorClimateMeasurementsUseCase =
+            scope1.ServiceProvider.GetService<GetSensorClimateMeasurementsUseCase>();
+
         TelemetrySourceValidator? telemetrySourceValidator = 
             scope1.ServiceProvider.GetService<TelemetrySourceValidator>();
 
@@ -62,6 +73,8 @@ public class DependencyInjectionTests
             scope1.ServiceProvider.GetService<RecordClimateMeasurementUseCase>();
 
         // Assert
+        Assert.NotNull(telemetryQueryValidator);
+
         Assert.NotNull(telemetryRequestValidator);
         Assert.NotNull(recordClimateMeasurementRequestValidator);
 
@@ -70,6 +83,9 @@ public class DependencyInjectionTests
 
         Assert.NotNull(getSensorByIdUseCase);
         Assert.NotNull(getSensorsUseCase);
+
+        Assert.NotNull(telemetryQuerySensorValidator);
+        Assert.NotNull(getSensorClimateMeasurementsUseCase);
         
         Assert.NotNull(telemetrySourceValidator);
         Assert.NotNull(recordClimateMeasurementUseCase);
@@ -79,6 +95,11 @@ public class DependencyInjectionTests
             scope2.ServiceProvider.GetRequiredService<TimeProvider>()
         );
 
+        Assert.Same(
+            telemetryQueryValidator,
+            scope2.ServiceProvider.GetRequiredService<TelemetryQueryValidator>()
+        );
+        
         Assert.Same(
             telemetryRequestValidator,
             scope2.ServiceProvider.GetRequiredService<TelemetryRequestValidator>()
@@ -107,6 +128,16 @@ public class DependencyInjectionTests
         Assert.NotSame(
             getSensorsUseCase,
             scope2.ServiceProvider.GetRequiredService<GetSensorsUseCase>()
+        );
+
+        Assert.NotSame(
+            telemetryQuerySensorValidator,
+            scope2.ServiceProvider.GetRequiredService<TelemetryQuerySensorValidator>()
+        );
+
+        Assert.NotSame(
+            getSensorClimateMeasurementsUseCase,
+            scope2.ServiceProvider.GetRequiredService<GetSensorClimateMeasurementsUseCase>()
         );
 
         Assert.NotSame(

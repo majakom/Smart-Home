@@ -7,5 +7,6 @@ public enum TelemetryQueryFailureReason
     InvalidSensorCategory,
     InvalidFromUtc,
     InvalidToUtc,
-    InvalidTimeRange
+    InvalidTimeRange,
+    InvalidLimit
 }

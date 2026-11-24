@@ -7,13 +7,13 @@ using SmartHome.Domain.Sensors;
 
 namespace SmartHome.Application.UseCases.Telemetry.GetSensorClimateMeasurements;
 
-public sealed class GetSenssorClimateMeasurementsUseCase
+public sealed class GetSensorClimateMeasurementsUseCase
 {
     private readonly IClimateMeasurementReader _measurementReader;
     private readonly TelemetryQueryValidator _queryValidator;
     private readonly TelemetryQuerySensorValidator _sensorValidator;
 
-    public GetSenssorClimateMeasurementsUseCase(
+    public GetSensorClimateMeasurementsUseCase(
         IClimateMeasurementReader measurementReader,
         TelemetryQueryValidator queryValidator,
         TelemetryQuerySensorValidator sensorValidator
@@ -31,7 +31,7 @@ public sealed class GetSenssorClimateMeasurementsUseCase
     {
         // 1. Validate Request
         TelemetryQueryFailureReason? queryFailure =
-            _queryValidator.Validate(request.FromUtc, request.ToUtc);
+            _queryValidator.Validate(request.FromUtc, request.ToUtc, request.Limit);
 
         if (queryFailure is TelemetryQueryFailureReason queryReason)
             return GetSensorClimateMeasurementsResult.Failure(queryReason);
@@ -51,6 +51,7 @@ public sealed class GetSenssorClimateMeasurementsUseCase
             request.SensorId,
             request.FromUtc,
             request.ToUtc,
+            request.Limit,
             cancellationToken
         );
 

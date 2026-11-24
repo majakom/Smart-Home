@@ -5,5 +5,6 @@ namespace SmartHome.Application.UseCases.Telemetry.GetSensorClimateMeasurements;
 public sealed record GetSensorClimateMeasurementsRequest(
     SensorId SensorId,
     DateTime FromUtc,
-    DateTime ToUtc
+    DateTime ToUtc,
+    int Limit = 100
 );
