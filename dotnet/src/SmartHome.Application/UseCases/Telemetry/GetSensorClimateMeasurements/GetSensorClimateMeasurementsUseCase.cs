@@ -1,4 +1,3 @@
-using SmartHome.Application.Abstractions.Sensors;
 using SmartHome.Application.Abstractions.Telemetry;
 using SmartHome.Application.UseCases.Telemetry.Shared.Results;
 using SmartHome.Application.UseCases.Telemetry.Shared.Validation;
@@ -26,7 +25,7 @@ public sealed class GetSensorClimateMeasurementsUseCase
 
     public async Task<GetSensorClimateMeasurementsResult> ExecuteAsync(
         GetSensorClimateMeasurementsRequest request,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = default
     )
     {
         // 1. Validate Request

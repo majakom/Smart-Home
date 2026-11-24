@@ -197,6 +197,24 @@ public class EfClimateMeasurementReaderTests : IAsyncLifetime
         ClimateMeasurement secondAtSameTime = new(
             new SourceMessageId(3), sensor.Id, sameMeasuredAtUtc, fromUtc.AddMinutes(12), 21m, 41m);
 
+        ClimateMeasurement[] expectedOrder =
+        [firstAtSameTime, secondAtSameTime, laterMeasurement];
+
+        Array.Sort(
+            expectedOrder,
+            (left, right) =>
+            {
+                int timestampComparison = left.MeasuredAtUtc.CompareTo(right.MeasuredAtUtc);
+
+                return timestampComparison != 0
+                    ? timestampComparison
+                    : StringComparer.Ordinal.Compare(
+                        left.Id.Value.ToString("N"),
+                        right.Id.Value.ToString("N")
+                    );
+            }
+        );
+
         _dbContext.Devices.Add(device);
         _dbContext.Sensors.Add(sensor);
         _dbContext.ClimateMeasurements.AddRange(
@@ -218,9 +236,9 @@ public class EfClimateMeasurementReaderTests : IAsyncLifetime
                 CancellationToken.None
             );
 
-            // Assert
+        // Assert
         Assert.Equal(
-            [firstAtSameTime.Id, secondAtSameTime.Id, laterMeasurement.Id],
+            expectedOrder.Select(measurement => measurement.Id),
             result.Select(measurement => measurement.Id));
     }
 
