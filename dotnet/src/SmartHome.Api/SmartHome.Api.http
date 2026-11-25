@@ -2,8 +2,12 @@
 @deviceId = 00000000-0000-0000-0000-000000000001
 @sensorId = 00000000-0000-0000-0000-000000000002
 
-### Health check
-GET {{SmartHomeApi_HostAddress}}/health
+### Liveness health check
+GET {{SmartHomeApi_HostAddress}}/health/live
+Accept: application/json
+
+### Readiness health check
+GET {{SmartHomeApi_HostAddress}}/health/ready
 Accept: application/json
 
 ### OpenAPI document
