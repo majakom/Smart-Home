@@ -3,10 +3,10 @@ namespace SmartHome.Api.Features.Devices;
 public static class DeviceEndpoints
 {
     public static IEndpointRouteBuilder MapDeviceEndpoints(
-        this IEndpointRouteBuilder app
+        this IEndpointRouteBuilder endpoints
     )
     {
-        var group = app.MapGroup("/api/devices")
+        var group = endpoints.MapGroup("/api/devices")
             .WithTags("Devices");
 
         group.MapGet("", GetDevices.GetDevicesEndpoint.Handle)
@@ -21,6 +21,6 @@ public static class DeviceEndpoints
             .ProducesValidationProblem(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
 
-        return app;
+        return endpoints;
     }
 }

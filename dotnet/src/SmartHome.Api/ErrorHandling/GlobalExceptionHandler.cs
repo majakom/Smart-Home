@@ -14,19 +14,37 @@ public sealed class GlobalExceptionHandler(
         CancellationToken cancellationToken
     )
     {
-        logger.LogError(
-            exception,
-            "Unhandled exception while processing {Method} {Path}",
-            httpContext.Request.Method,
-            httpContext.Request.Path
-        );
+        int statusCode = exception is BadHttpRequestException badHttpRequest
+            ? badHttpRequest.StatusCode
+            : StatusCodes.Status500InternalServerError;
 
-        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        if (statusCode >= StatusCodes.Status500InternalServerError)
+        {
+            logger.LogError(
+                exception,
+                "Unhandled exception while processing {Method} {Path}",
+                httpContext.Request.Method,
+                httpContext.Request.Path
+            );
+        }
+        else
+        {
+            logger.LogWarning(
+                "Rejected {Method} {Path} with HTTP status code {StatusCode}",
+                httpContext.Request.Method,
+                httpContext.Request.Path,
+                statusCode
+            );
+        }
+
+        httpContext.Response.StatusCode = statusCode;
 
         var problemDetails = new ProblemDetails
         {
-            Status = StatusCodes.Status500InternalServerError,
-            Title = "An unexpected error occurred.",
+            Status = statusCode,
+            Title = statusCode >= StatusCodes.Status500InternalServerError
+                ? "An unexpected error occurred."
+                : "The request could not be processed.",
             Instance = httpContext.Request.Path
         };
 

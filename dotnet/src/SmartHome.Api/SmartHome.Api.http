@@ -29,3 +29,7 @@ Accept: application/json
 ### Get sensor by ID
 GET {{SmartHomeApi_HostAddress}}/api/sensors/{{sensorId}}
 Accept: application/json
+
+### Get climate measurements for a sensor
+GET {{SmartHomeApi_HostAddress}}/api/sensors/{{sensorId}}/measurements/climate?fromUtc=2026-01-01T00:00:01Z&toUtc=2026-12-31T23:59:59Z&limit=200
+Accept: application/json

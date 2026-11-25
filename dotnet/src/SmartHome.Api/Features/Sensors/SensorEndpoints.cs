@@ -1,12 +1,14 @@
+using SmartHome.Api.Features.Sensors.Measurements.Climate;
+
 namespace SmartHome.Api.Features.Sensors;
 
 public static class SensorEndpoints
 {
     public static IEndpointRouteBuilder MapSensorEndpoints(
-        this IEndpointRouteBuilder app
+        this IEndpointRouteBuilder endpoints
     )
     {
-        var group = app.MapGroup("/api/sensors")
+        var group = endpoints.MapGroup("/api/sensors")
             .WithTags("Sensors");
 
         group.MapGet("", GetSensors.GetSensorsEndpoint.Handle)
@@ -21,6 +23,8 @@ public static class SensorEndpoints
             .ProducesValidationProblem(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
 
-        return app;
+        group.MapClimateEndpoints();
+
+        return endpoints;
     }
 }
