@@ -35,6 +35,8 @@ jobs:
     name: Test .NET solution
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      ConnectionStrings__SmartHome: "Host=localhost;Port=5432;Database=smarthome_postgres;Username=smarthome;Password=ci-only-placeholder;GSS Encryption Mode=Disable"
 
     steps:
       - name: Check out repository
