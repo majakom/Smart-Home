@@ -6,8 +6,8 @@ Local services are defined in the root `docker-compose.yml`. Run Docker Compose 
 
 - [PostgreSQL](infrastructure/postgres/README.md) — environment variables, startup, and persistent storage.
 - [Mosquitto](infrastructure/mosquitto/README.md) — TLS certificates, broker credentials, and client connection tests.
-- [SmartHome API](dotnet/src/SmartHome.Api/README.md) — local startup, HTTP endpoints, and health checks.
 - [Telemetry Worker](dotnet/src/SmartHome.TelemetryWorker/README.md) — local and Docker operation.
+- [SmartHome API](dotnet/src/SmartHome.Api/README.md) — local startup, HTTP endpoints, and health checks.
 
 Before starting the stack, copy `.env.example` to `.env` in the repository root and set `POSTGRES_PASSWORD` and `Mqtt__Credentials__Password`. Configure Mosquitto certificates and credentials by following its guide. The Telemetry Worker requires its own `ca.crt`, `client.crt`, and `client.key` under `dotnet/src/SmartHome.TelemetryWorker/certificates/`.
 
