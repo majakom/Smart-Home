@@ -356,19 +356,23 @@ jobs:
 
           BASE_URL="http://localhost:${API_PORT}"
 
-          # Health
+          echo "Checking API liveness..."
           curl --fail --show-error "$BASE_URL/health/live"
+
+          echo "Checking API readiness..."
           curl --fail --show-error "$BASE_URL/health/ready"
 
-          # Devices
+          echo "Checking devices endpoint..."
           curl --fail --show-error "$BASE_URL/api/devices"
 
-          # Sensors
+          echo "Checking sensors endpoint..."
           curl --fail --show-error "$BASE_URL/api/sensors"
 
-          # Docs
-          curl --fail --show-error "http://localhost:${API_PORT}/openapi/v1.json"
-          curl --fail --show-error "http://localhost:${API_PORT}/scala/" --output /dev/null
+          echo "Checking OpenAPI specification..."
+          curl --fail --show-error "$BASE_URL/openapi/v1.json"
+
+          echo "Checking Scalar documentation..."
+          curl --fail --show-error "$BASE_URL/scalar/" --output /dev/null
 
       - name: Show logs on failure
         if: failure()
