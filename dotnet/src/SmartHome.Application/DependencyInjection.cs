@@ -1,4 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
+using SmartHome.Application.UseCases.Devices.GetDeviceById;
+using SmartHome.Application.UseCases.Devices.GetDevices;
+using SmartHome.Application.UseCases.Sensors.GetSensorById;
+using SmartHome.Application.UseCases.Sensors.GetSensors;
+using SmartHome.Application.UseCases.Telemetry.GetSensorClimateMeasurements;
 using SmartHome.Application.UseCases.Telemetry.RecordClimateMeasurement;
 using SmartHome.Application.UseCases.Telemetry.Shared.Validation;
 
@@ -12,8 +17,19 @@ public static class DependencyInjection
     {
         services.AddSingleton<TimeProvider>(TimeProvider.System);
 
+        services.AddSingleton<TelemetryQueryValidator>();
+
         services.AddSingleton<TelemetryRequestValidator>();
         services.AddSingleton<RecordClimateMeasurementRequestValidator>();
+
+        services.AddScoped<GetDeviceByIdUseCase>();
+        services.AddScoped<GetDevicesUseCase>();
+
+        services.AddScoped<GetSensorByIdUseCase>();
+        services.AddScoped<GetSensorsUseCase>();
+
+        services.AddScoped<TelemetryQuerySensorValidator>();
+        services.AddScoped<GetSensorClimateMeasurementsUseCase>();
 
         services.AddScoped<TelemetrySourceValidator>();
         services.AddScoped<RecordClimateMeasurementUseCase>();

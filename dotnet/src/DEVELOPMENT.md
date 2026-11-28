@@ -13,7 +13,7 @@ For a schema change, follow this order:
 5. **Create a migration** with `dotnet ef migrations add`, review the generated migration and model snapshot, and commit them. The exact command is in the [Persistence guide](SmartHome.Infrastructure/Persistence/README.md).
 6. **Apply the migration** by running [SmartHome.DbMigrator](SmartHome.DbMigrator/README.md). It applies pending migrations and exits. For a local direct CLI update, use `dotnet ef database update` as described in the Persistence guide.
 
-Only create a migration when the persisted schema changes. The Domain, Application telemetry use case, Infrastructure persistence adapters, and DbMigrator are implemented. The API and Web projects remain template scaffolds.
+Only create a migration when the persisted schema changes. The Domain, Application use cases, Infrastructure persistence adapters, DbMigrator, and initial API operations are implemented. The Web project remains a template scaffold.
 
 ## Add a new telemetry measurement flow
 
@@ -65,12 +65,39 @@ Use this workflow for application behavior that is not recording telemetry, such
 4. **Implement outer-layer integrations only as required**:
    - If the use case reads or writes PostgreSQL, implement its Application abstractions in `SmartHome.Infrastructure/Persistence/Adapters/` and register them in Infrastructure DI.
    - Add EF Core configuration and a migration only if the stored schema changes; follow the database workflow above.
-   - Add the entry point to the appropriate host when that host is implemented. `SmartHome.Api` and `SmartHome.Web` are currently scaffolds; do not put use-case or business logic in a host.
+   - Add the entry point to the appropriate host. `SmartHome.Web` is still a scaffold; do not put use-case or business logic in a host.
    - Optionally, if the flow is triggered by MQTT and belongs to telemetry, add a contract and handler in `SmartHome.TelemetryWorker/Mqtt/` that maps the message to an Application request. Keep the Worker focused on telemetry; consider a separate host for unrelated MQTT commands.
 5. **Test and document the flow**:
    - Test Domain rules in `SmartHome.Domain.Tests/` and use-case behavior in `SmartHome.Application.Tests/`.
    - Test Infrastructure adapters against PostgreSQL when the behavior depends on database behavior; test host or transport integration at the owning host layer.
    - Update `SmartHome.Application/UseCases/README.md` and any host-facing contract or guide affected by the new flow.
+
+## Add an API endpoint
+
+Use this workflow to expose an Application operation over HTTP. Implement the Application use case first if it does not already exist; follow the telemetry or non-measurement workflow above for that work.
+
+1. **Define the HTTP contract**:
+   - Choose the route, method, query or route parameters, response shape, and expected status codes.
+   - Keep response types in the feature folder, for example `Features/<Feature>/<Feature>Response.cs` or `Features/<Feature>/<Subfeature>/<Subfeature>Response.cs`.
+2. **Implement the endpoint**:
+   - Place each operation in its own folder and endpoint file: `Features/<Feature>/<Operation>/<Operation>Endpoint.cs`.
+   - For a nested feature, include its path in the folder structure: `Features/<Feature>/<Subfeature>/<Operation>/<Operation>Endpoint.cs`.
+   - Bind and validate HTTP input, call the Application use case, and map its result to an HTTP response.
+   - Keep business rules in Domain/Application and database access out of the endpoint.
+3. **Add response mapping when needed**:
+   - Place a mapper alongside its response type, following `<Feature>ResponseMapper.cs` or `<Subfeature>ResponseMapper.cs` naming.
+   - Return the API's established validation, not-found, and Problem Details responses for corresponding outcomes.
+4. **Register and describe the route**:
+   - Register it in the feature route group, using `<Feature>Endpoints.cs`. Nested features can have their own `<Subfeature>Endpoints.cs` group under `Features/<Feature>/<Subfeature>/`.
+   - Add OpenAPI metadata such as a name, summary, response types, and documented error responses.
+   - For a new top-level route group, also map it from `SmartHome.Api/Program.cs`.
+5. **Add or update API integration tests**:
+   - Place tests under the matching feature and operation: `SmartHome.Api.Tests/Integration/Features/<Feature>/<Operation>Tests.cs`.
+   - For a nested feature, mirror its source folder structure under `SmartHome.Api.Tests/Integration/Features/`.
+   - Cover the successful response and relevant error cases, including invalid input and missing resources where applicable.
+6. **Update API usage documentation**:
+   - Add a request to `SmartHome.Api/SmartHome.Api.http` and document the route in `SmartHome.Api/README.md`.
+   - Update Application use-case documentation only if the Application behavior also changed.
 
 ## Change a shared component
 

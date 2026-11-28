@@ -38,22 +38,28 @@ public class DependencyInjectionTests
         SmartHomeDbContext dbContext =
             scope1.ServiceProvider.GetRequiredService<SmartHomeDbContext>();
 
-        IDeviceReader deviceReader =
-            scope1.ServiceProvider.GetRequiredService<IDeviceReader>();
-
         IDevicePresenceWriter devicePresenceWriter =
             scope1.ServiceProvider.GetRequiredService<IDevicePresenceWriter>();
 
+        IDeviceReader deviceReader =
+            scope1.ServiceProvider.GetRequiredService<IDeviceReader>();
+
         ISensorReader sensorReader =
             scope1.ServiceProvider.GetRequiredService<ISensorReader>();
+
+        IClimateMeasurementReader measurementReader =
+            scope1.ServiceProvider.GetRequiredService<IClimateMeasurementReader>();
 
         IClimateMeasurementWriter measurementWriter =
             scope1.ServiceProvider.GetRequiredService<IClimateMeasurementWriter>();
 
         // Assert
-        Assert.IsType<EfDeviceReader>(deviceReader);
         Assert.IsType<EfDevicePresenceWriter>(devicePresenceWriter);
+        Assert.IsType<EfDeviceReader>(deviceReader);
+        
         Assert.IsType<EfSensorReader>(sensorReader);
+
+        Assert.IsType<EfClimateMeasurementReader>(measurementReader);
         Assert.IsType<EfClimateMeasurementWriter>(measurementWriter);
 
         Assert.Same(
@@ -62,18 +68,23 @@ public class DependencyInjectionTests
         );
 
         Assert.Same(
-            deviceReader,
-            scope1.ServiceProvider.GetRequiredService<IDeviceReader>()
-        );
-
-        Assert.Same(
             devicePresenceWriter,
             scope1.ServiceProvider.GetRequiredService<IDevicePresenceWriter>()
         );
 
         Assert.Same(
+            deviceReader,
+            scope1.ServiceProvider.GetRequiredService<IDeviceReader>()
+        );
+
+        Assert.Same(
             sensorReader,
             scope1.ServiceProvider.GetRequiredService<ISensorReader>()
+        );
+
+        Assert.Same(
+            measurementReader,
+            scope1.ServiceProvider.GetRequiredService<IClimateMeasurementReader>()
         );
 
         Assert.Same(
@@ -87,18 +98,23 @@ public class DependencyInjectionTests
         );
 
         Assert.NotSame(
-            deviceReader,
-            scope2.ServiceProvider.GetRequiredService<IDeviceReader>()
-        );
-
-        Assert.NotSame(
             devicePresenceWriter,
             scope2.ServiceProvider.GetRequiredService<IDevicePresenceWriter>()
         );
 
         Assert.NotSame(
+            deviceReader,
+            scope2.ServiceProvider.GetRequiredService<IDeviceReader>()
+        );
+
+        Assert.NotSame(
             sensorReader,
             scope2.ServiceProvider.GetRequiredService<ISensorReader>()
+        );
+
+        Assert.NotSame(
+            measurementReader,
+            scope2.ServiceProvider.GetRequiredService<IClimateMeasurementReader>()
         );
 
         Assert.NotSame(

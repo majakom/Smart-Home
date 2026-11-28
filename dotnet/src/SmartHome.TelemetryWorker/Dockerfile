@@ -12,4 +12,6 @@ WORKDIR /app
 
 COPY --from=build /app/publish .
 
+USER $APP_UID
+
 ENTRYPOINT ["dotnet", "SmartHome.TelemetryWorker.dll"]

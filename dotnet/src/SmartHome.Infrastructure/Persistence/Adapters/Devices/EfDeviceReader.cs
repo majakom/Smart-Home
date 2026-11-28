@@ -25,4 +25,13 @@ public sealed class EfDeviceReader : IDeviceReader
                 cancellationToken
             );
     }
+
+    public async Task<IReadOnlyList<Device>> GetAllAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        return await _dbContext.Devices
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
 }

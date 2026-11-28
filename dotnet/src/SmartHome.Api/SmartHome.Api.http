@@ -1,6 +1,39 @@
-@SmartHome.Api_HostAddress = http://localhost:5243
+@SmartHomeApi_HostAddress = https://localhost:5001
+@deviceId = 00000000-0000-0000-0000-000000000001
+@sensorId = 00000000-0000-0000-0000-000000000002
 
-GET {{SmartHome.Api_HostAddress}}/weatherforecast/
+### Liveness health check
+GET {{SmartHomeApi_HostAddress}}/health/live
 Accept: application/json
 
-###
+### Readiness health check
+GET {{SmartHomeApi_HostAddress}}/health/ready
+Accept: application/json
+
+### OpenAPI document
+GET {{SmartHomeApi_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+### Devices
+
+### Get all devices
+GET {{SmartHomeApi_HostAddress}}/api/devices
+Accept: application/json
+
+### Get device by ID
+GET {{SmartHomeApi_HostAddress}}/api/devices/{{deviceId}}
+Accept: application/json
+
+### Sensors
+
+### Get all sensors
+GET {{SmartHomeApi_HostAddress}}/api/sensors
+Accept: application/json
+
+### Get sensor by ID
+GET {{SmartHomeApi_HostAddress}}/api/sensors/{{sensorId}}
+Accept: application/json
+
+### Get climate measurements for a sensor
+GET {{SmartHomeApi_HostAddress}}/api/sensors/{{sensorId}}/measurements/climate?fromUtc=2026-01-01T00:00:01Z&toUtc=2026-12-31T23:59:59Z&limit=200
+Accept: application/json

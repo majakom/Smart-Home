@@ -73,5 +73,23 @@ services:
       mosquitto:
         condition: service_started
 
+  api:
+    container_name: smarthome-api
+    build:
+      context: ./dotnet
+      dockerfile: src/SmartHome.Api/Dockerfile
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__SmartHome: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-smarthome_postgres};Username=${POSTGRES_USER:-smarthome};Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set in .env};GSS Encryption Mode=Disable"
+    ports:
+      - "${API_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      db-migrator:
+        condition: service_completed_successfully
+
 volumes:
   postgres_data:
